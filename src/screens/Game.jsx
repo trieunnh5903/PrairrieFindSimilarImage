@@ -14,10 +14,9 @@ import LottieView from 'lottie-react-native';
 
 const {width: screen_width} = Dimensions.get('window');
 const Game = ({navigation}) => {
-  const {timeToPlay, timeToDisplayImage, selectedGame} = useSelector(
-    state => state.app,
-  );
-  const timePlay = timeToPlay;
+  const timePlay = useSelector(state => state.timeToPlay);
+  const timeToDisplayImage = useSelector(state => state.timeToDisplayImage);
+  const selectedGame = useSelector(state => state.selectedGame);
   const timeOffImage = timeToDisplayImage * 1000;
   const [isPlaying, setIsPlaying] = useState(false);
   const [images, setImages] = useState([
@@ -298,6 +297,7 @@ const styles = StyleSheet.create({
     top: 0,
     right: 0,
     margin: 20,
+    zIndex: 10,
   },
 
   timerText: {

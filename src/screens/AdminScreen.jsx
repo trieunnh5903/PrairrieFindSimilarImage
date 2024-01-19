@@ -15,7 +15,8 @@ import {useNavigation} from '@react-navigation/native';
 
 const AdminScreen = () => {
   const navigation = useNavigation();
-  const {timeToPlay, timeToDisplayImage} = useSelector(state => state.app);
+  const timeToPlay = useSelector(state => state.timeToPlay);
+  const timeToDisplayImage = useSelector(state => state.timeToDisplayImage);
   const [timePlay, setTimePlay] = useState(timeToPlay);
   const [timeDisplay, setTimeDisplay] = useState(timeToDisplayImage);
   const dispatch = useDispatch();
