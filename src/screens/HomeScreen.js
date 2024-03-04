@@ -1,95 +1,157 @@
 import {
+  Alert,
   Dimensions,
   Image,
+  ImageBackground,
+  Modal,
+  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import React from 'react';
-import {useDispatch} from 'react-redux';
-import {selectGame} from '../redux/appSlice';
+import React, {useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import {changeLevel, selectGame} from '../redux/appSlice';
+import {icons} from '../constant';
+import {colors} from '../asset/constant';
 
 const width = Dimensions.get('window').width;
 const HomeScreen = ({navigation}) => {
   const dispatch = useDispatch();
-  const image = [
-    {
-      id: 1,
-      uri: 'https://images.unsplash.com/photo-1550258987-190a2d41a8ba?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    },
-    // dâu
-    {
-      id: 2,
-      uri: 'https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2?q=80&w=1915&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    },
-    // cam
-    {
-      id: 3,
-      uri: 'https://images.unsplash.com/photo-1557800636-894a64c1696f?q=80&w=1965&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    },
-    // chuoi
-    {
-      id: 4,
-      uri: 'https://images.unsplash.com/photo-1528825871115-3581a5387919?q=80&w=1915&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    },
-  ];
+  const [timePress, setTimePress] = useState(0);
+  const image = useSelector(state => state.food);
+  const [modalLevelVisible, setModalLevelVisible] = useState(false);
 
   const handleButtonPress = uri => {
     dispatch(selectGame(uri));
+    setModalLevelVisible(true);
+  };
+
+  const onTimePress = () => {
+    setTimePress(pre => pre + 1);
+
+    if (timePress === 5) {
+      navigation.navigate('password');
+      clearTimeout(timeout);
+    }
+
+    const timeout = setTimeout(() => {
+      setTimePress(0);
+    }, 4000);
+  };
+
+  const handleLevelPress = index => {
+    dispatch(changeLevel(index));
+    setModalLevelVisible(false);
     navigation.navigate('game');
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.row}>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => handleButtonPress(image[0].uri)}>
-          <Image
-            source={{uri: image[0].uri}}
-            style={{width: width * 0.4, aspectRatio: 1, borderRadius: 8}}
-          />
-        </TouchableOpacity>
+    <ImageBackground source={icons.bgHome} style={styles.container}>
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalLevelVisible}
+        onRequestClose={() => setModalLevelVisible(false)}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            {['Dễ', 'Trung bình', 'Khó'].map((item, index) => {
+              return (
+                <TouchableOpacity
+                  onPress={() => handleLevelPress(index + 1)}
+                  key={item}
+                  activeOpacity={0.8}
+                  style={styles.buttonLevel}>
+                  <Text style={styles.buttonLevelText}>{item}</Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </View>
+      </Modal>
 
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => handleButtonPress(image[1].uri)}>
-          <Image
-            source={{uri: image[1].uri}}
-            style={{width: width * 0.4, aspectRatio: 1, borderRadius: 8}}
-          />
-        </TouchableOpacity>
+      <View style={styles.foodSelectContainer}>
+        {image.map(food => {
+          if (food.selected && food.canChange) {
+            return (
+              <TouchableOpacity
+                activeOpacity={0.8}
+                key={food.id + food.uri}
+                style={styles.button}
+                onPress={() => handleButtonPress(food.uri)}>
+                <Image source={food.uri} style={styles.imageGift} />
+              </TouchableOpacity>
+            );
+          }
+        })}
       </View>
 
-      <View style={styles.row}>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => handleButtonPress(image[2].uri)}>
-          <Image
-            source={{uri: image[2].uri}}
-            style={{width: width * 0.4, aspectRatio: 1, borderRadius: 8}}
-          />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => handleButtonPress(image[3].uri)}>
-          <Image
-            source={{uri: image[3].uri}}
-            style={{width: width * 0.4, aspectRatio: 1, borderRadius: 8}}
-          />
-        </TouchableOpacity>
-      </View>
-    </View>
+      <Pressable onPress={onTimePress} style={styles.admin} />
+    </ImageBackground>
   );
 };
 
 export default HomeScreen;
 
 const styles = StyleSheet.create({
-  container: {
+  buttonLevel: {
+    backgroundColor: colors.primary,
+    width: width * 0.4,
+    height: 60,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  buttonLevelText: {
+    color: 'white',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+  },
+  modalView: {
     gap: 16,
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+
+  admin: {
+    width: width * 0.3,
+    height: width * 0.3,
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+  },
+  imageGift: {
+    width: width * 0.4,
+    height: width * 0.4,
+    borderRadius: 8,
+  },
+  foodSelectContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignSelf: 'center',
+    gap: 16,
+    justifyContent: 'center',
+  },
+  container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',

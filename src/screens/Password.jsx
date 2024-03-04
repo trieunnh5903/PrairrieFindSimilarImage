@@ -27,6 +27,7 @@ const Password = ({navigation}) => {
           keyboardType="numeric"
           value={password}
           onChangeText={value => setPassword(value)}
+          secureTextEntry={true}
           style={styles.input}
         />
       </View>
