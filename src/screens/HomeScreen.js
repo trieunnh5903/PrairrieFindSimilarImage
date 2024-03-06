@@ -1,5 +1,4 @@
 import {
-  Alert,
   Dimensions,
   Image,
   ImageBackground,
@@ -73,14 +72,14 @@ const HomeScreen = ({navigation}) => {
 
       <View style={styles.foodSelectContainer}>
         {image.map(food => {
-          if (food.selected && food.canChange) {
+          if (food.selected) {
             return (
               <TouchableOpacity
                 activeOpacity={0.8}
-                key={food.id + food.uri}
+                key={food.uri}
                 style={styles.button}
                 onPress={() => handleButtonPress(food.uri)}>
-                <Image source={food.uri} style={styles.imageGift} />
+                <Image source={{uri: food.uri}} style={styles.imageGift} />
               </TouchableOpacity>
             );
           }

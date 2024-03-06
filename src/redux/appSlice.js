@@ -7,40 +7,40 @@ const initialState = {
   level: 1,
   food: [
     // dưa
-    {
-      id: 1,
-      uri: require('../asset/thom.webp'),
-      selected: true,
-      canChange: true,
-    },
+    // {
+    //   id: 1,
+    //   uri: require('../asset/thom.webp'),
+    //   selected: true,
+    //   canChange: true,
+    // },
     // dâu
-    {
-      id: 2,
-      selected: true,
-      canChange: true,
-      uri: require('../asset/dau.webp'),
-    },
+    // {
+    //   id: 2,
+    //   selected: true,
+    //   canChange: true,
+    //   uri: require('../asset/dau.webp'),
+    // },
     // cam
-    {
-      id: 3,
-      selected: true,
-      canChange: true,
-      uri: require('../asset/cam.webp'),
-    },
+    // {
+    //   id: 3,
+    //   selected: true,
+    //   canChange: true,
+    //   uri: require('../asset/cam.webp'),
+    // },
     // chuoi
-    {
-      id: 4,
-      selected: true,
-      canChange: true,
-      uri: require('../asset/chuoi.webp'),
-    },
+    // {
+    //   id: 4,
+    //   selected: true,
+    //   canChange: true,
+    //   uri: require('../asset/chuoi.webp'),
+    // },
     // cherry
-    {
-      id: 5,
-      selected: true,
-      uri: require('../asset/cherry.webp'),
-      canChange: false,
-    },
+    // {
+    //   id: 5,
+    //   selected: true,
+    //   uri: require('../asset/cherry.webp'),
+    //   canChange: false,
+    // },
     // //  dudu
     // {
     //   id: 11,

@@ -8,85 +8,13 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {useSelector} from 'react-redux';
 import {icons} from '../constant';
+import {Freeze} from 'react-freeze';
 
 const {width: screen_width, height: screen_height} = Dimensions.get('window');
-// [
-//   // dứa
-//   {
-//     id: 1,
-//     // uri: 'https://images.unsplash.com/photo-1550258987-190a2d41a8ba?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-//     uri: require('../asset/thom.webp'),
-//   },
-//   // dâu
-//   {
-//     id: 2,
-//     // uri: 'https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2?q=80&w=1915&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-//     uri: require('../asset/dau.webp'),
-//   },
-//   // cam
-//   {
-//     id: 3,
-//     // uri: 'https://images.unsplash.com/photo-1557800636-894a64c1696f?q=80&w=1965&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-//     uri: require('../asset/cam.webp'),
-//   },
-//   // chuoi
-//   {
-//     id: 4,
-//     // uri: 'https://images.unsplash.com/photo-1528825871115-3581a5387919?q=80&w=1915&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-//     uri: require('../asset/chuoi.webp'),
-//   },
-//   // cherry
-//   {
-//     id: 5,
-//     // uri: 'https://images.unsplash.com/photo-1559181567-c3190ca9959b?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-//     uri: require('../asset/cherry.webp'),
-//   },
-//   //  dudu
-//   {
-//     id: 11,
-//     // uri: 'https://images.unsplash.com/photo-1517282009859-f000ec3b26fe?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-//     uri: require('../asset/dudu.webp'),
-//   },
-//   // dứa
-//   {
-//     id: 6,
-//     // uri: 'https://images.unsplash.com/photo-1550258987-190a2d41a8ba?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-//     uri: require('../asset/thom.webp'),
-//   },
-//   // dâu
-//   {
-//     id: 7,
-//     // uri: 'https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2?q=80&w=1915&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-//     uri: require('../asset/dau.webp'),
-//   },
-//   // cam
-//   {
-//     id: 8,
-//     // uri: 'https://images.unsplash.com/photo-1557800636-894a64c1696f?q=80&w=1965&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-//     uri: require('../asset/cam.webp'),
-//   },
-//   // chuoi
-//   {
-//     id: 9,
-//     // uri: 'https://images.unsplash.com/photo-1528825871115-3581a5387919?q=80&w=1915&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-//     uri: require('../asset/chuoi.webp'),
-//   },
-//   // cherry
-//   {
-//     id: 10,
-//     // uri: 'https://images.unsplash.com/photo-1559181567-c3190ca9959b?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-//     uri: require('../asset/cherry.webp'),
-//   },
-//   //  dudu
-//   {
-//     id: 12,
-//     // uri: 'https://images.unsplash.com/photo-1517282009859-f000ec3b26fe?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-//     uri: require('../asset/dudu.webp'),
-//   },
-// ]
+
 const Game = ({navigation}) => {
   const foodStore = useSelector(state => state.food);
   const timePlay = useSelector(state => state.timeToPlay);
@@ -100,17 +28,16 @@ const Game = ({navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [secondsRemaining, setSecondsRemaining] = useState(timePlay);
   const intervalIDRef = React.useRef(null);
-  // const [timePress, setTimePress] = useState(0);
   const [win, setwin] = useState(false);
   const [selectedImage1, setSelectedImage1] = useState(false);
   const timeoutImage1Visible = React.useRef(null);
-  const caculateCellWidth = () => {
+  const caculateCellWidth = useMemo(() => {
     const divide = level === 1 ? 3 : level === 2 ? 4 : 5;
     return Math.min(
       (screen_width - 32) / divide,
       (screen_height - screen_width * 0.2 - 32) * divide,
     );
-  };
+  }, [level]);
 
   useEffect(() => {
     if (selectedImage1) {
@@ -126,7 +53,6 @@ const Game = ({navigation}) => {
 
   useEffect(() => {
     // tạo mảng hình chưa trộn
-    // const imageResult = foodStore.find(i => i.uri === selectedGame);
     const newArray = [];
     const totalItem = level === 1 ? 9 : level === 2 ? 16 : 25;
     for (let i = 0; i < totalItem; i++) {
@@ -136,15 +62,6 @@ const Game = ({navigation}) => {
       newArray.push({...imageGift, id: new Date().getTime()});
     }
 
-    // const doubledImages = [];
-    // for (const originalImage of foodStore) {
-    //   // Clone phần tử của mảng cũ
-    //   const duplicate1 = {...originalImage, id: originalImage.id * 2 - 1};
-    //   const duplicate2 = {...originalImage, id: originalImage.id * 2};
-
-    //   // Thêm phần tử clone vào mảng mới
-    //   doubledImages.push(duplicate1, duplicate2);
-    // }
     setImages(newArray);
     return () => {};
   }, [foodStore, level]);
@@ -167,7 +84,6 @@ const Game = ({navigation}) => {
           setSelectedImage1(false);
         }, timeOffImage);
       }
-      // Đặt lại danh sách hình ảnh đã chọn
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedImages]);
@@ -178,56 +94,48 @@ const Game = ({navigation}) => {
     setwin(true);
   };
 
-  // const pickImage = () => {
-  //   ImagePicker.launchImageLibrary({}, response => {
-  //     if (!response.didCancel) {
-  //       const newImages = [...images, {id: images.length, uri: response.uri}];
-  //       setImages(newImages);
-  //     }
-  //   });
-  // };
+  const handleImagePress = useCallback(
+    image => {
+      if (selectedImages.length < 2 && !selectedImages.includes(image)) {
+        if (selectedImages.length === 0) {
+          setSelectedImage1(true);
+        }
 
-  const handleImagePress = image => {
-    if (selectedImages.length < 2 && !selectedImages.includes(image)) {
-      if (selectedImages.length === 0) {
-        setSelectedImage1(true);
+        const newSelectedImages = [...selectedImages, image];
+        setSelectedImages(newSelectedImages);
       }
+    },
+    [selectedImages],
+  );
 
-      const newSelectedImages = [...selectedImages, image];
-      setSelectedImages(newSelectedImages);
-    }
-  };
-
-  const shuffleImages = () => {
+  const shuffleImages = useCallback(() => {
     let newImages = [...images];
     for (let i = newImages.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [newImages[i], newImages[j]] = [newImages[j], newImages[i]];
     }
     setImages(newImages);
-  };
+  }, [images]);
 
-  // time out
   useEffect(() => {
     if (secondsRemaining <= 0) {
-      // Thực hiện các hành động khi thời gian hết ở đây
       stopTimer();
       setModalVisible(true);
       setIsPlaying(false);
     }
-  }, [secondsRemaining]);
+  }, [secondsRemaining, stopTimer]);
 
-  const startTimer = () => {
+  const startTimer = useCallback(() => {
     setSecondsRemaining(timePlay);
     intervalIDRef.current = setInterval(() => {
       setSecondsRemaining(pre => pre - 1);
     }, 1000);
-  };
+  }, [timePlay]);
 
-  const stopTimer = () => {
+  const stopTimer = useCallback(() => {
     clearInterval(intervalIDRef.current);
     intervalIDRef.current = null;
-  };
+  }, []);
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('blur', () => {
@@ -236,7 +144,7 @@ const Game = ({navigation}) => {
     });
 
     return unsubscribe;
-  }, [navigation]);
+  }, [navigation, stopTimer]);
 
   const onStartPress = () => {
     if (images) {
@@ -284,32 +192,21 @@ const Game = ({navigation}) => {
 
         <View style={styles.gameWrapper}>
           {/* <View style={{flex: 1, width: '100%'}} /> */}
-          <View
-            style={{
-              flexDirection: 'row',
-              flexWrap: 'wrap',
-            }}>
+          <View style={styles.gameContainer}>
             {images.map((image, index) => (
               <TouchableOpacity
                 activeOpacity={0.8}
                 key={index}
                 onPress={() => intervalIDRef.current && handleImagePress(image)}
-                style={[styles.cell, {width: caculateCellWidth()}]}>
+                style={[styles.cell, {width: caculateCellWidth}]}>
                 {selectedImages.includes(image) ? (
-                  <Image
-                    source={image.uri}
-                    style={{width: '100%', height: '100%', borderRadius: 6}}
-                  />
+                  <Image source={{uri: image.uri}} style={styles.imageGift} />
                 ) : (
-                  <Image
-                    source={icons.logo}
-                    style={{width: '100%', height: '100%', borderRadius: 6}}
-                  />
+                  <Image source={icons.logo} style={styles.imageGift} />
                 )}
               </TouchableOpacity>
             ))}
           </View>
-          {/* <View style={{flex: 1, width: '100%'}} /> */}
         </View>
 
         {isPlaying ? (
@@ -337,6 +234,11 @@ const Game = ({navigation}) => {
 export default Game;
 
 const styles = StyleSheet.create({
+  imageGift: {width: '100%', height: '100%', borderRadius: 6},
+  gameContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
   disabledButton: {
     backgroundColor: '#d3d3d3',
   },
@@ -375,6 +277,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     flex: 1,
+    backgroundColor: 'red',
   },
   container: {
     flex: 1,

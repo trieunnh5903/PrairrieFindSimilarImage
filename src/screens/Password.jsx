@@ -9,6 +9,7 @@ import {
   View,
 } from 'react-native';
 import React, {useState} from 'react';
+import {colors} from '../asset/constant';
 
 const Password = ({navigation}) => {
   const [password, setPassword] = useState();
@@ -21,7 +22,7 @@ const Password = ({navigation}) => {
   };
   return (
     <Pressable onPress={() => Keyboard.dismiss()} style={styles.container}>
-      <Text style={{color: 'black'}}>Nhập mật khẩu</Text>
+      <Text style={{color: 'white'}}>Nhập mật khẩu</Text>
       <View style={styles.passwordWrapper}>
         <TextInput
           keyboardType="numeric"
@@ -34,7 +35,7 @@ const Password = ({navigation}) => {
       <TouchableOpacity
         onPress={onPress}
         style={[styles.button, styles.buttonClose]}>
-        <Text style={{textAlign: 'center', color: 'white'}}>Thay đổi</Text>
+        <Text style={{textAlign: 'center', color: 'black'}}>Thay đổi</Text>
       </TouchableOpacity>
     </Pressable>
   );
@@ -52,17 +53,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#F194FF',
   },
   buttonClose: {
-    backgroundColor: '#2196F3',
+    backgroundColor: 'white',
     margin: 20,
   },
   input: {
-    color: 'black',
+    color: 'white',
+    fontSize: 16,
   },
   container: {
     flex: 1,
     justifyContent: 'center',
     padding: 20,
-    backgroundColor: 'white',
+    backgroundColor: colors.primary,
   },
 
   passwordWrapper: {
@@ -70,5 +72,8 @@ const styles = StyleSheet.create({
     width: '100%',
     borderRadius: 6,
     borderWidth: 1,
+    borderColor: 'white',
+    height: 60,
+    justifyContent: 'center',
   },
 });
