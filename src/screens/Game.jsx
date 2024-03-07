@@ -11,7 +11,13 @@ import {
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {useSelector} from 'react-redux';
 import {icons} from '../constant';
-import {Freeze} from 'react-freeze';
+import Animated, {
+  interpolate,
+  runOnJS,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 
 const {width: screen_width, height: screen_height} = Dimensions.get('window');
 
@@ -26,11 +32,12 @@ const Game = ({navigation}) => {
   const [images, setImages] = useState([...foodStore, ...foodStore]);
   const [selectedImages, setSelectedImages] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
-  const [secondsRemaining, setSecondsRemaining] = useState(timePlay);
+  const secondsRemaining = useSharedValue(timePlay);
   const intervalIDRef = React.useRef(null);
   const [win, setwin] = useState(false);
   const [selectedImage1, setSelectedImage1] = useState(false);
   const timeoutImage1Visible = React.useRef(null);
+
   const caculateCellWidth = useMemo(() => {
     const divide = level === 1 ? 3 : level === 2 ? 4 : 5;
     return Math.min(
@@ -90,7 +97,6 @@ const Game = ({navigation}) => {
 
   const onSelectedSuccess = () => {
     stopTimer();
-    setIsPlaying(false);
     setwin(true);
   };
 
@@ -117,25 +123,17 @@ const Game = ({navigation}) => {
     setImages(newImages);
   }, [images]);
 
-  useEffect(() => {
-    if (secondsRemaining <= 0) {
-      stopTimer();
-      setModalVisible(true);
-      setIsPlaying(false);
-    }
-  }, [secondsRemaining, stopTimer]);
-
   const startTimer = useCallback(() => {
-    setSecondsRemaining(timePlay);
-    intervalIDRef.current = setInterval(() => {
-      setSecondsRemaining(pre => pre - 1);
-    }, 1000);
-  }, [timePlay]);
+    secondsRemaining.value = withTiming(0, {duration: timePlay * 1000}, () => {
+      runOnJS(stopTimer)();
+      runOnJS(setModalVisible)(true);
+    });
+  }, [secondsRemaining, stopTimer, timePlay]);
 
   const stopTimer = useCallback(() => {
-    clearInterval(intervalIDRef.current);
-    intervalIDRef.current = null;
-  }, []);
+    secondsRemaining.value = timePlay;
+    setIsPlaying(false);
+  }, [secondsRemaining, timePlay]);
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('blur', () => {
@@ -155,6 +153,17 @@ const Game = ({navigation}) => {
       setwin(false);
     }
   };
+
+  const timeRemainingStyle = useAnimatedStyle(() => {
+    const width = interpolate(
+      secondsRemaining.value,
+      [timePlay, 0],
+      [screen_width - 34, 0],
+    );
+    return {width: width};
+  });
+
+  console.log(selectedImages);
 
   return (
     <>
@@ -176,7 +185,6 @@ const Game = ({navigation}) => {
             </View>
           </Pressable>
         </Modal>
-
         <Modal transparent={true} visible={win}>
           <Pressable
             onPress={() => {
@@ -188,8 +196,13 @@ const Game = ({navigation}) => {
             </View>
           </Pressable>
         </Modal>
-        {/* Hiển thị hình ảnh */}
 
+        <View style={{padding: 16}}>
+          <View style={styles.timerWrapper}>
+            <Animated.View style={[styles.timer, timeRemainingStyle]} />
+          </View>
+        </View>
+        {/* Hiển thị hình ảnh */}
         <View style={styles.gameWrapper}>
           {/* <View style={{flex: 1, width: '100%'}} /> */}
           <View style={styles.gameContainer}>
@@ -197,7 +210,7 @@ const Game = ({navigation}) => {
               <TouchableOpacity
                 activeOpacity={0.8}
                 key={index}
-                onPress={() => intervalIDRef.current && handleImagePress(image)}
+                onPress={() => handleImagePress(image)}
                 style={[styles.cell, {width: caculateCellWidth}]}>
                 {selectedImages.includes(image) ? (
                   <Image source={{uri: image.uri}} style={styles.imageGift} />
@@ -208,24 +221,19 @@ const Game = ({navigation}) => {
             ))}
           </View>
         </View>
-
-        {isPlaying ? (
-          <Text style={styles.timerText}>{`${secondsRemaining} giây`}</Text>
-        ) : (
-          <TouchableOpacity
-            disabled={isPlaying}
-            style={{alignSelf: 'center'}}
-            onPress={onStartPress}>
-            <Image
-              style={{
-                height: screen_width * 0.2,
-                width: screen_width * 0.4,
-              }}
-              resizeMode="contain"
-              source={icons.btn_letgo}
-            />
-          </TouchableOpacity>
-        )}
+        <TouchableOpacity
+          disabled={isPlaying}
+          style={styles.buttonStart}
+          onPress={onStartPress}>
+          <Image
+            style={{
+              height: screen_width * 0.2,
+              width: screen_width * 0.4,
+            }}
+            resizeMode="contain"
+            source={icons.btn_letgo}
+          />
+        </TouchableOpacity>
       </View>
     </>
   );
@@ -234,6 +242,7 @@ const Game = ({navigation}) => {
 export default Game;
 
 const styles = StyleSheet.create({
+  buttonStart: {alignSelf: 'center'},
   imageGift: {width: '100%', height: '100%', borderRadius: 6},
   gameContainer: {
     flexDirection: 'row',
@@ -245,12 +254,18 @@ const styles = StyleSheet.create({
   disabledText: {
     color: '#a9a9a9',
   },
+  timerWrapper: {
+    height: 30,
+    width: '100%',
+    backgroundColor: 'rgba(0,0,0,0.2)',
+    borderRadius: 4,
+    borderWidth: 1,
+  },
+
   timer: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    margin: 20,
-    zIndex: 10,
+    height: 28,
+    borderRadius: 4,
+    backgroundColor: 'white',
   },
 
   timerText: {
@@ -277,7 +292,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     flex: 1,
-    backgroundColor: 'red',
   },
   container: {
     flex: 1,
