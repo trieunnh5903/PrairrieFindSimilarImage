@@ -14,6 +14,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {changeLevel, selectGame} from '../redux/appSlice';
 import {icons} from '../constant';
 import {colors} from '../asset/constant';
+import {CommonActions} from '@react-navigation/native';
 
 const width = Dimensions.get('window').width;
 const HomeScreen = ({navigation}) => {
@@ -26,6 +27,18 @@ const HomeScreen = ({navigation}) => {
     dispatch(selectGame(uri));
     setModalLevelVisible(true);
   };
+
+  React.useEffect(() => {
+    if (!image.length) {
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 1,
+          routes: [{name: 'password'}],
+        }),
+      );
+    }
+    return () => {};
+  }, [image, navigation]);
 
   const onTimePress = () => {
     setTimePress(pre => pre + 1);

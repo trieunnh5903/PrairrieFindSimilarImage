@@ -2,18 +2,15 @@ import {
   Alert,
   BackHandler,
   Dimensions,
-  FlatList,
   Image,
   Keyboard,
   Pressable,
   ScrollView,
   StyleSheet,
-  Switch,
   Text,
   TextInput,
   TouchableOpacity,
   View,
-  useWindowDimensions,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
@@ -27,18 +24,54 @@ import ImagePicker from 'react-native-image-crop-picker';
 const {width} = Dimensions.get('window');
 const AdminScreen = ({navigation}) => {
   const foodStore = useSelector(state => state.food);
-  // const [food, setFood] = useState(foodStore);
   const timeToPlay = useSelector(state => state.timeToPlay);
   const timeToDisplayImage = useSelector(state => state.timeToDisplayImage);
   const [timePlay, setTimePlay] = useState(timeToPlay);
   const [timeDisplay, setTimeDisplay] = useState(timeToDisplayImage);
   const [listImage, setListImage] = useState(foodStore);
+  const [imageLose, setImageLose] = useState();
   const dispatch = useDispatch();
   const onSubmitPress = () => {
+    const result = validate();
+    console.log(result);
+    if (result === false) {
+      return;
+    }
     dispatch(changeTimeToDisplayImage(timeDisplay));
     dispatch(changeTimeToPlay(timePlay));
     dispatch(changeFood(listImage));
     Alert.alert('Thông báo', 'Thay đổi thành công');
+  };
+
+  const validate = () => {
+    if (listImage.length === 0) {
+      Alert.alert('', 'Hình ảnh game trống');
+      return false;
+    }
+
+    listImage.forEach(element => {
+      if (element.selected && !element.giftUri) {
+        Alert.alert('', 'Hình ảnh phần quà trống');
+        return false;
+      }
+    });
+
+    if (!imageLose) {
+      Alert.alert('', 'Hình ảnh thua cuộc trống');
+      return false;
+    }
+
+    if (timeDisplay <= 0) {
+      Alert.alert('', 'Thời gian lật hình không đúng');
+      return false;
+    }
+
+    if (timePlay <= 0) {
+      Alert.alert('', 'Thời gian chơi không đúng');
+      return false;
+    }
+
+    return true;
   };
 
   useEffect(() => {
@@ -55,19 +88,6 @@ const AdminScreen = ({navigation}) => {
     return () => backHandler.remove();
   }, [navigation]);
 
-  // const toggleSwitch = (value, item) => {
-  //   console.log(value);
-  //   console.log(item);
-  //   const newFood = food.map(food => {
-  //     if (food.id === item.id) {
-  //       return {...food, selected: value};
-  //     } else {
-  //       return food;
-  //     }
-  //   });
-  //   setFood(newFood);
-  // };
-
   const handleSelectImage = async () => {
     ImagePicker.openPicker({
       multiple: true,
@@ -76,6 +96,17 @@ const AdminScreen = ({navigation}) => {
       .then(images => {
         const formartImages = images.map(i => ({uri: i.path}));
         setListImage(formartImages);
+      })
+      .catch(() => {});
+  };
+
+  const handleLoseImagePress = async () => {
+    ImagePicker.openPicker({
+      multiple: false,
+      mediaType: 'photo',
+    })
+      .then(result => {
+        setImageLose(result.path);
       })
       .catch(() => {});
   };
@@ -91,59 +122,131 @@ const AdminScreen = ({navigation}) => {
     setListImage(updateImage);
   };
 
+  console.log(listImage);
+  const handleImageGift = uri => {
+    ImagePicker.openPicker({
+      multiple: false,
+      mediaType: 'photo',
+    })
+      .then(result => {
+        const newListImage = listImage.map(item => {
+          if (item.selected && item.uri === uri) {
+            return {...item, giftUri: result.path};
+          } else {
+            return item;
+          }
+        });
+
+        setListImage(newListImage);
+      })
+      .catch(() => {});
+  };
+
   return (
     <ScrollView style={{backgroundColor: 'white'}}>
       <Pressable onPress={() => Keyboard.dismiss()} style={styles.container}>
-        <Text style={styles.textBlack}>Hình ảnh game</Text>
-
-        <View style={styles.imageWrapper}>
-          {listImage?.map(item => {
-            return (
-              <TouchableOpacity
-                key={item.uri}
-                activeOpacity={0.8}
-                style={[styles.image]}
-                onPress={() => onImagePress(item)}>
-                <Image source={{uri: item.uri}} style={styles.image} />
-                {item.selected && (
-                  <Image
-                    source={require('../asset/selected.png')}
-                    style={styles.selected}
-                  />
-                )}
-              </TouchableOpacity>
-            );
-          })}
+        <View style={styles.selectImageWrapper}>
+          <Text style={styles.textBlack}>Hình ảnh game</Text>
+          <TouchableOpacity onPress={handleSelectImage} style={[styles.button]}>
+            <Text style={[styles.textStyle]}>Chọn ảnh</Text>
+          </TouchableOpacity>
         </View>
 
-        <Text style={styles.textBlack}>
+        <View style={styles.imageWrapper}>
+          {listImage.length > 0 ? (
+            listImage?.map(item => {
+              return (
+                <TouchableOpacity
+                  key={item.uri}
+                  activeOpacity={0.8}
+                  style={[styles.image]}
+                  onPress={() => onImagePress(item)}>
+                  <Image source={{uri: item.uri}} style={styles.image} />
+                  {item.selected && (
+                    <Image
+                      source={require('../asset/selected.png')}
+                      style={styles.selected}
+                    />
+                  )}
+                </TouchableOpacity>
+              );
+            })
+          ) : (
+            <Text>(Trống)</Text>
+          )}
+        </View>
+
+        <Text style={[styles.textBlack, styles.textGray]}>
           Số ảnh chơi game: {listImage.length || 0}
         </Text>
-        <Text style={styles.textBlack}>
+        <Text style={[styles.textBlack, styles.textGray]}>
           Số phần quà: {listImage.filter(i => i.selected === true).length || 0}
         </Text>
 
-        <TouchableOpacity onPress={handleSelectImage} style={[styles.button]}>
-          <Text style={[styles.textStyle]}>Chọn ảnh</Text>
-        </TouchableOpacity>
-        {/* <View style={{gap: 10, flexDirection: 'row', flexWrap: 'wrap'}}>
-          {food.map(i => {
-            if (i.canChange) {
-              return (
-                <View style={{flexDirection: 'row'}} key={i.uri}>
-                  <Image source={i.uri} style={styles.image} />
-                  <Switch
-                    trackColor={{false: '#767577', true: '#81b0ff'}}
-                    thumbColor={i.selected ? '#81b0ff' : '#f4f3f4'}
-                    ios_backgroundColor="#3e3e3e"
-                    onValueChange={value => toggleSwitch(value, i)}
-                    value={i.selected}
-                  />
-                </View>
-              );
-            }
-          })}
-        </View> */}
+        <View>
+          <Text style={styles.textBlack}>Hình ảnh phần quà</Text>
+          <View style={{gap: 16, marginTop: 16}}>
+            {listImage.map(image => {
+              if (image.selected) {
+                return (
+                  <View style={styles.rowGift} key={'qua' + image.uri}>
+                    <View style={styles.giftWrapper}>
+                      <Image
+                        resizeMode="contain"
+                        source={{uri: image.uri}}
+                        style={styles.gift}
+                      />
+                    </View>
+
+                    <Image
+                      resizeMode="contain"
+                      style={{width: width * 0.1, height: width * 0.1}}
+                      source={require('../asset/right_arrow.png')}
+                    />
+
+                    <TouchableOpacity
+                      onPress={() => handleImageGift(image.uri)}
+                      activeOpacity={0.8}
+                      style={styles.giftWrapper}>
+                      {image.giftUri ? (
+                        <Image
+                          resizeMode="contain"
+                          source={{uri: image.giftUri}}
+                          style={styles.gift}
+                        />
+                      ) : (
+                        <View style={[styles.gift, styles.giftEmpty]}>
+                          <Text>Trống</Text>
+                        </View>
+                      )}
+                    </TouchableOpacity>
+                  </View>
+                );
+              }
+            })}
+            {listImage.filter(i => i.selected === true).length > 0 ===
+              false && <Text style={{marginVertical: 6}}>(Trống)</Text>}
+          </View>
+        </View>
+
+        <View style={{gap: 16}}>
+          <Text style={styles.textBlack}>Hình ảnh thua cuộc</Text>
+          {imageLose ? (
+            <Image
+              style={styles.image}
+              source={{
+                uri: imageLose,
+              }}
+            />
+          ) : (
+            <Text>(Trống)</Text>
+          )}
+          <TouchableOpacity
+            onPress={handleLoseImagePress}
+            style={[styles.button]}>
+            <Text style={[styles.textStyle]}>Chọn ảnh</Text>
+          </TouchableOpacity>
+        </View>
 
         <View style={{gap: 6}}>
           <Text style={styles.textBlack}>Thời gian chơi (giây)</Text>
@@ -180,6 +283,21 @@ const AdminScreen = ({navigation}) => {
 export default AdminScreen;
 
 const styles = StyleSheet.create({
+  giftEmpty: {
+    borderColor: 'black',
+    borderWidth: 1,
+    borderRadius: 6,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  giftWrapper: {flex: 1, borderRadius: 6},
+  gift: {width: '100%', aspectRatio: 1, borderRadius: 6},
+  rowGift: {
+    gap: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   selected: {
     borderWidth: 2,
     width: '20%',
@@ -204,16 +322,24 @@ const styles = StyleSheet.create({
     height: (width - 32) / 2 - 10,
     borderRadius: 6,
   },
+
   textBlack: {
     color: 'black',
     fontWeight: 'bold',
     fontSize: 16,
   },
 
+  textGray: {
+    color: 'gray',
+  },
+
   textStyle: {
     color: 'white',
     textAlign: 'center',
+    fontSize: 16,
   },
+
+  selectImageWrapper: {flexDirection: 'row', gap: 20, alignItems: 'center'},
 
   button: {
     borderRadius: 20,

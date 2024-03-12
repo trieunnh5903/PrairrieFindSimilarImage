@@ -9,6 +9,8 @@ import {Provider} from 'react-redux';
 import {persistor, store} from './src/redux/store';
 import HomeScreen from './src/screens/HomeScreen';
 import {PersistGate} from 'redux-persist/integration/react';
+import LoseScreen from './src/screens/LoseScreen';
+import WinnerScreen from './src/screens/WinnerScreen';
 const Stack = createNativeStackNavigator();
 const App = () => {
   return (
@@ -22,6 +24,8 @@ const App = () => {
             <Stack.Screen name="home" component={HomeScreen} />
             <Stack.Screen name="admin" component={AdminScreen} />
             <Stack.Screen name="game" component={Game} />
+            <Stack.Screen name="lose" component={LoseScreen} />
+            <Stack.Screen name="win" component={WinnerScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </PersistGate>

@@ -33,7 +33,6 @@ const Game = ({navigation}) => {
   const [selectedImages, setSelectedImages] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const secondsRemaining = useSharedValue(timePlay);
-  const intervalIDRef = React.useRef(null);
   const [win, setwin] = useState(false);
   const [selectedImage1, setSelectedImage1] = useState(false);
   const timeoutImage1Visible = React.useRef(null);
@@ -98,6 +97,7 @@ const Game = ({navigation}) => {
   const onSelectedSuccess = () => {
     stopTimer();
     setwin(true);
+    navigation.navigate('win');
   };
 
   const handleImagePress = useCallback(
@@ -124,11 +124,18 @@ const Game = ({navigation}) => {
   }, [images]);
 
   const startTimer = useCallback(() => {
-    secondsRemaining.value = withTiming(0, {duration: timePlay * 1000}, () => {
-      runOnJS(stopTimer)();
-      runOnJS(setModalVisible)(true);
-    });
-  }, [secondsRemaining, stopTimer, timePlay]);
+    secondsRemaining.value = withTiming(
+      0,
+      {duration: timePlay * 1000},
+      isFinished => {
+        runOnJS(stopTimer)();
+        if (isFinished && !win) {
+          runOnJS(navigation.navigate)('lose');
+        }
+      },
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [secondsRemaining, stopTimer, timePlay, win]);
 
   const stopTimer = useCallback(() => {
     secondsRemaining.value = timePlay;
@@ -209,8 +216,9 @@ const Game = ({navigation}) => {
             {images.map((image, index) => (
               <TouchableOpacity
                 activeOpacity={0.8}
+                disabled={!isPlaying}
                 key={index}
-                onPress={() => handleImagePress(image)}
+                onPress={() => isPlaying && handleImagePress(image)}
                 style={[styles.cell, {width: caculateCellWidth}]}>
                 {selectedImages.includes(image) ? (
                   <Image source={{uri: image.uri}} style={styles.imageGift} />
@@ -220,20 +228,20 @@ const Game = ({navigation}) => {
               </TouchableOpacity>
             ))}
           </View>
+          <TouchableOpacity
+            disabled={isPlaying}
+            style={styles.buttonStart}
+            onPress={onStartPress}>
+            <Image
+              style={{
+                height: screen_width * 0.2,
+                width: screen_width * 0.4,
+              }}
+              resizeMode="contain"
+              source={icons.btn_letgo}
+            />
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          disabled={isPlaying}
-          style={styles.buttonStart}
-          onPress={onStartPress}>
-          <Image
-            style={{
-              height: screen_width * 0.2,
-              width: screen_width * 0.4,
-            }}
-            resizeMode="contain"
-            source={icons.btn_letgo}
-          />
-        </TouchableOpacity>
       </View>
     </>
   );
@@ -285,13 +293,14 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   gameWrapper: {
-    // gap: 6,
+    gap: 20,
     padding: 16,
     // flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
     alignItems: 'center',
     flex: 1,
+    // backgroundColor: 'red',
   },
   container: {
     flex: 1,
