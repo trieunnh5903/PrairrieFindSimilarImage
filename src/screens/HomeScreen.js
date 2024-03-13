@@ -87,7 +87,7 @@ const HomeScreen = ({navigation}) => {
       </Modal>
 
       <View style={styles.foodSelectContainer}>
-        {/* {image.map(food => {
+        {image.map(food => {
           if (food.selected) {
             return (
               <TouchableOpacity
@@ -99,7 +99,7 @@ const HomeScreen = ({navigation}) => {
               </TouchableOpacity>
             );
           }
-        })} */}
+        })}
       </View>
 
       <Pressable onPress={onTimePress} style={styles.admin} />

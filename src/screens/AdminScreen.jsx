@@ -34,6 +34,7 @@ const AdminScreen = ({navigation}) => {
   const [timeDisplay, setTimeDisplay] = useState(timeToDisplayImage);
   const dispatch = useDispatch();
 
+  console.log(listImage);
   const onSubmitPress = () => {
     const result = validate();
     if (result === false) {
@@ -392,6 +393,7 @@ const AdminScreen = ({navigation}) => {
                 <View style={styles.giftWrapper}>
                   <View style={styles.inputWrapper}>
                     <Text
+                      numberOfLines={1}
                       style={[
                         {margin: 13, flex: 1},
                         styles.textBlack,
