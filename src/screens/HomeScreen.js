@@ -60,7 +60,10 @@ const HomeScreen = ({navigation}) => {
   };
 
   return (
-    <ImageBackground source={icons.bgHome} style={styles.container}>
+    <ImageBackground
+      resizeMode="contain"
+      source={icons.bgHome}
+      style={styles.container}>
       <Modal
         animationType="fade"
         transparent={true}
@@ -84,7 +87,7 @@ const HomeScreen = ({navigation}) => {
       </Modal>
 
       <View style={styles.foodSelectContainer}>
-        {image.map(food => {
+        {/* {image.map(food => {
           if (food.selected) {
             return (
               <TouchableOpacity
@@ -96,7 +99,7 @@ const HomeScreen = ({navigation}) => {
               </TouchableOpacity>
             );
           }
-        })}
+        })} */}
       </View>
 
       <Pressable onPress={onTimePress} style={styles.admin} />
