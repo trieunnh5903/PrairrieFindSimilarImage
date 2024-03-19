@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import React, {useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {changeLevel, selectGame} from '../redux/appSlice';
+import {changeLevel} from '../redux/appSlice';
 import {icons} from '../constant';
 import {colors} from '../asset/constant';
 import {CommonActions} from '@react-navigation/native';
@@ -20,11 +20,11 @@ const width = Dimensions.get('window').width;
 const HomeScreen = ({navigation}) => {
   const dispatch = useDispatch();
   const [timePress, setTimePress] = useState(0);
-  const image = useSelector(state => state.food);
+  const image = useSelector(state => state.imageInGame);
   const [modalLevelVisible, setModalLevelVisible] = useState(false);
+  const bannerImage = useSelector(state => state.banner);
 
-  const handleButtonPress = uri => {
-    dispatch(selectGame(uri));
+  const handleButtonPress = () => {
     setModalLevelVisible(true);
   };
 
@@ -60,16 +60,17 @@ const HomeScreen = ({navigation}) => {
   };
 
   return (
-    <ImageBackground
-      resizeMode="contain"
-      source={icons.bgHome}
-      style={styles.container}>
+    <ImageBackground source={icons.bgHome} style={styles.container}>
       <Modal
         animationType="fade"
         transparent={true}
         visible={modalLevelVisible}
         onRequestClose={() => setModalLevelVisible(false)}>
         <View style={styles.centeredView}>
+          <Pressable
+            onPress={() => setModalLevelVisible(false)}
+            style={styles.modalOverlay}
+          />
           <View style={styles.modalView}>
             {['Dễ', 'Trung bình', 'Khó'].map((item, index) => {
               return (
@@ -86,22 +87,42 @@ const HomeScreen = ({navigation}) => {
         </View>
       </Modal>
 
-      <View style={styles.foodSelectContainer}>
-        {image.map(food => {
-          if (food.selected) {
-            return (
-              <TouchableOpacity
-                activeOpacity={0.8}
-                key={food.uri}
-                style={styles.button}
-                onPress={() => handleButtonPress(food.uri)}>
-                <Image source={{uri: food.uri}} style={styles.imageGift} />
-              </TouchableOpacity>
-            );
-          }
-        })}
+      <View style={{alignItems: 'center'}}>
+        <Image
+          source={icons.logo_removebg}
+          style={{width: 60, height: (60 / 500) * 815, margin: 10}}
+          resizeMode="contain"
+        />
+      </View>
+      <View style={styles.banner}>
+        {/* <TouchableOpacity
+          activeOpacity={0.8}
+          style={styles.button}
+          onPress={() => handleButtonPress()}>
+          <Text>Start</Text>
+        </TouchableOpacity> */}
+        {/* <View style={{flex: 1, backgroundColor: 'yellow'}}> </View> */}
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={() => handleButtonPress()}
+          style={{flex: 1}}>
+          {bannerImage && (
+            <Image
+              source={{uri: bannerImage}}
+              style={{flex: 1}}
+              resizeMode="contain"
+            />
+          )}
+        </TouchableOpacity>
       </View>
 
+      <View>
+        <Image
+          source={icons.gift}
+          style={{width: width, height: (width / 250) * 101}}
+          resizeMode="contain"
+        />
+      </View>
       <Pressable onPress={onTimePress} style={styles.admin} />
     </ImageBackground>
   );
@@ -110,6 +131,13 @@ const HomeScreen = ({navigation}) => {
 export default HomeScreen;
 
 const styles = StyleSheet.create({
+  modalOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
   buttonLevel: {
     backgroundColor: colors.primary,
     width: width * 0.4,
@@ -159,17 +187,18 @@ const styles = StyleSheet.create({
     height: width * 0.4,
     borderRadius: 8,
   },
-  foodSelectContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    alignSelf: 'center',
-    gap: 16,
-    justifyContent: 'center',
+  banner: {
+    flex: 1,
+    padding: 16,
+    // flexDirection: 'row',
+    // flexWrap: 'wrap',
+    // alignSelf: 'center',
+    // justifyContent: 'center',
   },
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    // justifyContent: 'center',
+    // alignItems: 'center',
   },
   row: {
     flexDirection: 'row',

@@ -1,12 +1,30 @@
 import {createSlice} from '@reduxjs/toolkit';
 
 const initialState = {
-  timeToPlay: 30,
-  timeToDisplayImage: 1,
-  selectedGame: '',
   level: 1,
-  food: [],
+  imageInGame: [],
   loseImage: '',
+  banner: '',
+  time: [
+    {
+      key: 1,
+      name: 'Dễ',
+      timeOffImage: '0',
+      timePlay: '0',
+    },
+    {
+      key: 2,
+      name: 'Trung bình',
+      timeOffImage: '0',
+      timePlay: '0',
+    },
+    {
+      key: 3,
+      name: 'Khó',
+      timeOffImage: '0',
+      timePlay: '0',
+    },
+  ],
 };
 
 export const appSlice = createSlice({
@@ -14,23 +32,45 @@ export const appSlice = createSlice({
   initialState,
   reducers: {
     changeTimeToPlay: (state, action) => {
-      state.timeToPlay = action.payload;
+      const {value, index} = action.payload;
+      state.time[index].timePlay = value;
     },
 
-    changeTimeToDisplayImage: (state, action) => {
-      state.timeToDisplayImage = action.payload;
+    changeTimeOffImage: (state, action) => {
+      const {value, index} = action.payload;
+      state.time[index].timeOffImage = value;
     },
 
-    selectGame: (state, action) => {
-      state.selectedGame = action.payload;
+    addImages: (state, action) => {
+      state.imageInGame = action.payload;
     },
 
-    changeFood: (state, action) => {
-      state.food = action.payload;
+    updateImages: (state, action) => {
+      state.imageInGame = action.payload;
+    },
+
+    updatePair: (state, action) => {
+      const {value, uri, level} = action.payload;
+      const newListImage = state.imageInGame.map(item => {
+        if (item.uri === uri) {
+          // let pair = item.pair || ['0', '0', '0'];
+          // pair[level - 1] = text;
+          let pair = item.pair || ['', '', ''];
+          pair[level - 1] = value;
+          return {...item, pair};
+        } else {
+          return item;
+        }
+      });
+      state.imageInGame = newListImage;
     },
 
     changeLoseImage: (state, action) => {
       state.loseImage = action.payload;
+    },
+
+    changeBannerImage: (state, action) => {
+      state.banner = action.payload;
     },
 
     changeLevel: (state, action) => {
@@ -41,12 +81,14 @@ export const appSlice = createSlice({
 
 // Action creators are generated for each case reducer function
 export const {
-  changeTimeToDisplayImage,
+  addImages,
+  updateImages,
+  changeTimeOffImage,
   changeTimeToPlay,
-  selectGame,
-  changeFood,
   changeLevel,
   changeLoseImage,
+  updatePair,
+  changeBannerImage,
 } = appSlice.actions;
 
 export default appSlice.reducer;

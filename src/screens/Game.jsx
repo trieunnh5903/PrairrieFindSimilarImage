@@ -1,10 +1,8 @@
 import {
   Dimensions,
   Image,
-  Modal,
   Pressable,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -12,6 +10,8 @@ import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {useSelector} from 'react-redux';
 import {icons} from '../constant';
 import Animated, {
+  FadeIn,
+  FadeOut,
   interpolate,
   runOnJS,
   useAnimatedStyle,
@@ -22,28 +22,34 @@ import Animated, {
 const {width: screen_width, height: screen_height} = Dimensions.get('window');
 
 const Game = ({navigation}) => {
-  const foodStore = useSelector(state => state.food);
-  const timePlay = useSelector(state => state.timeToPlay);
+  const foodStore = useSelector(state => state.imageInGame);
   const level = useSelector(state => state.level);
-  const timeToDisplayImage = useSelector(state => state.timeToDisplayImage);
-  const selectedGame = useSelector(state => state.selectedGame);
-  const timeOffImage = timeToDisplayImage * 1000;
+  const time = useSelector(state => state.time);
+  const timePlay = Number(time[level - 1].timePlay); // second
+  const timeOffImage = Number(time[level - 1].timeOffImage) * 1000; // milisecond
   const [isPlaying, setIsPlaying] = useState(false);
-  const [images, setImages] = useState([...foodStore, ...foodStore]);
+  const [images, setImages] = useState([...foodStore]);
   const [selectedImages, setSelectedImages] = useState([]);
-  const [modalVisible, setModalVisible] = useState(false);
   const secondsRemaining = useSharedValue(timePlay);
   const [win, setwin] = useState(false);
   const [selectedImage1, setSelectedImage1] = useState(false);
   const timeoutImage1Visible = React.useRef(null);
+  const luckyGiftUri = useMemo(() => {
+    return images.map(i => {
+      if (i.selected === true) {
+        return i.uri;
+      }
+    });
+  }, [images]);
 
   const caculateCellWidth = useMemo(() => {
-    const divide = level === 1 ? 3 : level === 2 ? 4 : 5;
     return Math.min(
-      (screen_width - 32) / divide,
-      (screen_height - screen_width * 0.2 - 32) * divide,
+      (screen_width - 32) / 4,
+      (screen_height - screen_width * 0.2 - 32) * 4,
     );
-  }, [level]);
+  }, []);
+
+  const numberOfCell = level === 1 ? 16 : level === 2 ? 20 : 24;
 
   useEffect(() => {
     if (selectedImage1) {
@@ -57,33 +63,56 @@ const Game = ({navigation}) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedImage1]);
 
+  // console.log(images);
   useEffect(() => {
-    // tạo mảng hình chưa trộn
-    const newArray = [];
-    const totalItem = level === 1 ? 9 : level === 2 ? 16 : 25;
-    for (let i = 0; i < totalItem; i++) {
-      // Lấy phần tử từ mảng gốc theo vòng lặp, nếu mảng gốc đã hết phần tử, quay lại đầu mảng gốc
-      const index = i % foodStore.length;
-      const imageGift = foodStore[index];
-      newArray.push({...imageGift, id: new Date().getTime()});
-    }
+    const createNewImageArray = () => {
+      const listSortImageLucky = [];
+      const listSortImageUnlucky = [];
+      const listImageLucky = [];
+      const listImageUnLucky = [];
+      images.map(item => {
+        if (item.selected) {
+          listSortImageLucky.push(item);
+        } else {
+          listSortImageUnlucky.push(item);
+        }
+      });
+      // generate image have a gift
+      for (let index = 0; index < listSortImageLucky.length; index++) {
+        const image = listSortImageLucky[index];
+        if (image.selected) {
+          const numberOfPair = Number(image.pair[level - 1]);
+          for (let j = 0; j < numberOfPair * 2; j++) {
+            listImageLucky.push({...image, id: new Date().getTime()});
+          }
+        }
+      }
 
-    setImages(newArray);
+      // generate image dont have gift
+      for (let i = 0; i < numberOfCell - listImageLucky.length; i++) {
+        const index = i % listSortImageUnlucky.length;
+        const imageGift = listSortImageUnlucky[index];
+        listImageUnLucky.push({...imageGift, id: new Date().getTime()});
+      }
+
+      return [...listImageUnLucky, ...listImageLucky];
+    };
+
+    const newList = createNewImageArray();
+    setImages(newList);
+
     return () => {};
-  }, [foodStore, level]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
-    // Hàm này sẽ được gọi mỗi khi trạng thái selectedImages thay đổi
     if (selectedImages.length === 2) {
-      // Kiểm tra xem hai hình ảnh giống nhau hay không
       if (
         selectedImages[0].uri === selectedImages[1].uri &&
-        selectedImages[1].uri === selectedGame
+        luckyGiftUri.includes(selectedImages[1].uri)
       ) {
-        // Nếu giống nhau, có thể thực hiện các hành động khác ở đây
-        onSelectedSuccess();
+        onSelectedSuccess(selectedImages[0].uri);
       } else {
-        // Nếu không giống nhau, có thể thực hiện các hành động khác ở đây
         clearTimeout(timeoutImage1Visible.current);
         setTimeout(() => {
           setSelectedImages([]);
@@ -94,10 +123,10 @@ const Game = ({navigation}) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedImages]);
 
-  const onSelectedSuccess = () => {
+  const onSelectedSuccess = uri => {
     stopTimer();
     setwin(true);
-    navigation.navigate('win');
+    navigation.navigate('win', {uri});
   };
 
   const handleImagePress = useCallback(
@@ -114,24 +143,24 @@ const Game = ({navigation}) => {
     [selectedImages],
   );
 
-  const shuffleImages = useCallback(() => {
+  const shuffleImages = () => {
     let newImages = [...images];
     for (let i = newImages.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [newImages[i], newImages[j]] = [newImages[j], newImages[i]];
     }
     setImages(newImages);
-  }, [images]);
+  };
 
   const startTimer = useCallback(() => {
     secondsRemaining.value = withTiming(
       0,
       {duration: timePlay * 1000},
       isFinished => {
-        runOnJS(stopTimer)();
         if (isFinished && !win) {
           runOnJS(navigation.navigate)('lose');
         }
+        runOnJS(stopTimer)();
       },
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -170,80 +199,57 @@ const Game = ({navigation}) => {
     return {width: width};
   });
 
-  console.log(selectedImages);
-
   return (
-    <>
-      <View style={styles.container}>
-        {/* modal */}
-        <Modal
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={() => {
-            setModalVisible(!modalVisible);
-          }}>
-          <Pressable
-            onPress={() => {
-              setModalVisible(!modalVisible);
-            }}
-            style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <Text style={[styles.textStyle]}>Hết giờ</Text>
-            </View>
-          </Pressable>
-        </Modal>
-        <Modal transparent={true} visible={win}>
-          <Pressable
-            onPress={() => {
-              setwin(false);
-            }}
-            style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <Text style={[styles.textStyle]}>Win</Text>
-            </View>
-          </Pressable>
-        </Modal>
-
-        <View style={{padding: 16}}>
-          <View style={styles.timerWrapper}>
-            <Animated.View style={[styles.timer, timeRemainingStyle]} />
-          </View>
-        </View>
-        {/* Hiển thị hình ảnh */}
-        <View style={styles.gameWrapper}>
-          {/* <View style={{flex: 1, width: '100%'}} /> */}
-          <View style={styles.gameContainer}>
-            {images.map((image, index) => (
-              <TouchableOpacity
-                activeOpacity={0.8}
-                disabled={!isPlaying}
-                key={index}
-                onPress={() => isPlaying && handleImagePress(image)}
-                style={[styles.cell, {width: caculateCellWidth}]}>
-                {selectedImages.includes(image) ? (
-                  <Image source={{uri: image.uri}} style={styles.imageGift} />
-                ) : (
-                  <Image source={icons.logo} style={styles.imageGift} />
-                )}
-              </TouchableOpacity>
-            ))}
-          </View>
-          <TouchableOpacity
-            disabled={isPlaying}
-            style={styles.buttonStart}
-            onPress={onStartPress}>
-            <Image
-              style={{
-                height: screen_width * 0.2,
-                width: screen_width * 0.4,
-              }}
-              resizeMode="contain"
-              source={icons.btn_letgo}
-            />
-          </TouchableOpacity>
+    <View style={styles.container}>
+      <View style={{padding: 16}}>
+        <View style={styles.timerWrapper}>
+          <Animated.View style={[styles.timer, timeRemainingStyle]} />
         </View>
       </View>
-    </>
+      {/* Hiển thị hình ảnh */}
+      <View style={styles.gameWrapper}>
+        <View style={styles.gameContainer}>
+          {images.map((image, index) => (
+            <Pressable
+              activeOpacity={0.8}
+              disabled={!isPlaying}
+              key={index}
+              onPress={() => isPlaying && handleImagePress(image)}
+              style={[styles.cell, {width: caculateCellWidth}]}>
+              {selectedImages.includes(image) ? (
+                <Animated.Image
+                  entering={FadeIn}
+                  exiting={FadeOut}
+                  source={{uri: image.uri}}
+                  style={styles.imageGift}
+                />
+              ) : (
+                <Animated.Image
+                  entering={FadeIn}
+                  exiting={FadeOut}
+                  source={icons.logo}
+                  style={styles.imageGift}
+                />
+              )}
+            </Pressable>
+          ))}
+        </View>
+      </View>
+
+      <TouchableOpacity
+        disabled={isPlaying}
+        style={styles.buttonStart}
+        onPress={onStartPress}>
+        <Image
+          style={{
+            height: screen_width * 0.2,
+            width: screen_width * 0.4,
+          }}
+          resizeMode="contain"
+          source={icons.btn_letgo}
+        />
+      </TouchableOpacity>
+    </View>
   );
 };
 
@@ -293,13 +299,15 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   gameWrapper: {
+    height: screen_height - 30 - 64 - screen_width * 0.2,
+    overflow: 'hidden',
     gap: 20,
-    padding: 16,
+    paddingHorizontal: 16,
     // flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
     alignItems: 'center',
-    flex: 1,
+    // flex: 1,
     // backgroundColor: 'red',
   },
   container: {
