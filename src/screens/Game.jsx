@@ -284,19 +284,9 @@ const Game = ({navigation}) => {
               onPress={() => isPlaying && handleImagePress(image)}
               style={[styles.cell, {width: caculateCellWidth}]}>
               {selectedImages.includes(image) ? (
-                <Animated.Image
-                  entering={FadeIn}
-                  exiting={FadeOut}
-                  source={{uri: image.uri}}
-                  style={styles.imageGift}
-                />
+                <Image source={{uri: image.uri}} style={styles.imageGift} />
               ) : (
-                <Animated.Image
-                  entering={FadeIn}
-                  exiting={FadeOut}
-                  source={icons.logo}
-                  style={styles.imageGift}
-                />
+                <Image source={icons.logo} style={styles.imageGift} />
               )}
             </Pressable>
           ))}
