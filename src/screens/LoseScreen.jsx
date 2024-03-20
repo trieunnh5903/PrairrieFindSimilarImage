@@ -8,7 +8,7 @@ const LoseScreen = () => {
   return (
     <View style={{flex: 1}}>
       <Image
-        resizeMode="contain"
+        resizeMode="cover"
         source={{uri: foodStore}}
         style={{width: '100%', height: '100%'}}
       />

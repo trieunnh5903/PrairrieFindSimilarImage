@@ -6,7 +6,7 @@ const WinnerScreen = ({route}) => {
   return (
     <View style={{flex: 1}}>
       <Image
-        resizeMode="contain"
+        resizeMode="cover"
         source={{uri: uri}}
         style={{width: '100%', height: '100%'}}
       />

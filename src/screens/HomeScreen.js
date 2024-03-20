@@ -95,13 +95,6 @@ const HomeScreen = ({navigation}) => {
         />
       </View>
       <View style={styles.banner}>
-        {/* <TouchableOpacity
-          activeOpacity={0.8}
-          style={styles.button}
-          onPress={() => handleButtonPress()}>
-          <Text>Start</Text>
-        </TouchableOpacity> */}
-        {/* <View style={{flex: 1, backgroundColor: 'yellow'}}> </View> */}
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={() => handleButtonPress()}
@@ -117,6 +110,16 @@ const HomeScreen = ({navigation}) => {
       </View>
 
       <View>
+        <Image
+          source={icons.text_home}
+          style={{
+            width: 200,
+            height: (200 / 1000) * 320,
+            alignSelf: 'center',
+            marginBottom: -40,
+          }}
+          resizeMode="contain"
+        />
         <Image
           source={icons.gift}
           style={{width: width, height: (width / 250) * 101}}

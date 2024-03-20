@@ -39,6 +39,7 @@ const icons = {
   logo: require('../asset/logo.png'),
   logo_removebg: require('../asset/logo_removebg.png'),
   gift: require('../asset/gift.png'),
+  text_home: require('../asset/text_home.png'),
 };
 
 export {icons};

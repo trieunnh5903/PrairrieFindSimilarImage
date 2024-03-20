@@ -19,8 +19,6 @@ import {icons} from '../constant';
 import Animated, {
   Easing,
   Extrapolation,
-  FadeIn,
-  FadeOut,
   interpolate,
   runOnJS,
   useAnimatedStyle,
@@ -59,7 +57,7 @@ const Game = ({navigation}) => {
   const caculateCellWidth = useMemo(() => {
     return Math.min(
       (screen_width - 32) / 4,
-      (screen_height - screen_width * 0.2 - 32) * 4,
+      (screen_height - screen_width * 0.2 - 32 - StatusBar.currentHeight) / 4,
     );
   }, []);
 
