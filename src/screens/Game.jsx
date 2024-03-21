@@ -44,6 +44,7 @@ const Game = ({navigation}) => {
   const timeoutImage1Visible = React.useRef(null);
   const [showCountDown, setShowCountDown] = useState(false);
   const numberOfCell = level === 1 ? 16 : level === 2 ? 20 : 24;
+  const numberOfRow = level === 1 ? 4 : level === 2 ? 5 : 6;
   const [countDown, setCountDown] = useState(timeCountDown);
   const countDownValue = useSharedValue(0);
   const luckyGiftUri = useMemo(() => {
@@ -57,9 +58,10 @@ const Game = ({navigation}) => {
   const caculateCellWidth = useMemo(() => {
     return Math.min(
       (screen_width - 32) / 4,
-      (screen_height - screen_width * 0.2 - 32 - StatusBar.currentHeight) / 4,
+      (screen_height - screen_width * 0.2 - 62 - StatusBar.currentHeight) /
+        numberOfRow,
     );
-  }, []);
+  }, [numberOfRow]);
 
   useEffect(() => {
     const BAT_DAU = 'BẮT ĐẦU';
@@ -351,6 +353,8 @@ const styles = StyleSheet.create({
   gameContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   disabledButton: {
     backgroundColor: '#d3d3d3',
@@ -389,15 +393,14 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   gameWrapper: {
-    height: screen_height - 62 - screen_width * 0.2 - StatusBar.currentHeight,
+    // height: screen_height - 62 - screen_width * 0.2 - StatusBar.currentHeight,
     overflow: 'hidden',
-    gap: 20,
     paddingHorizontal: 16,
     // flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
     alignItems: 'center',
-    // flex: 1,
+    flex: 1,
   },
   container: {
     flex: 1,
