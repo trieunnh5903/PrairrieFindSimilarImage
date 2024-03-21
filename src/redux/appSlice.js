@@ -1,6 +1,7 @@
 import {createSlice} from '@reduxjs/toolkit';
 
 const initialState = {
+  error: true,
   level: 1,
   imageInGame: [],
   loseImage: '',
@@ -31,6 +32,10 @@ export const appSlice = createSlice({
   name: 'counter',
   initialState,
   reducers: {
+    setError: (state, action) => {
+      state.error = action.payload;
+    },
+
     changeTimeToPlay: (state, action) => {
       const {value, index} = action.payload;
       state.time[index].timePlay = value;
@@ -81,6 +86,7 @@ export const appSlice = createSlice({
 
 // Action creators are generated for each case reducer function
 export const {
+  setError,
   addImages,
   updateImages,
   changeTimeOffImage,

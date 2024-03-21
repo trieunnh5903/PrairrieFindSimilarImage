@@ -186,7 +186,6 @@ const Game = ({navigation}) => {
 
   const onSelectedSuccess = uri => {
     navigation.navigate('win', {uri});
-    setCountDown(timeCountDown);
     stopTimer();
     // setwin(true);
   };
@@ -223,6 +222,7 @@ const Game = ({navigation}) => {
     const unsubscribe = navigation.addListener('blur', () => {
       stopTimer();
       setIsPlaying(false);
+      // setCountDown(timeCountDown);
     });
 
     return unsubscribe;

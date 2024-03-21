@@ -1,10 +1,22 @@
-import {Image, StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import {BackHandler, Image, StyleSheet, Text, View} from 'react-native';
+import React, {useEffect} from 'react';
 import {useSelector} from 'react-redux';
 
-const LoseScreen = () => {
+const LoseScreen = ({navigation}) => {
   const foodStore = useSelector(state => state.loseImage);
+  useEffect(() => {
+    const backAction = () => {
+      navigation.navigate('home');
+      return true;
+    };
 
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+
+    return () => backHandler.remove();
+  }, [navigation]);
   return (
     <View style={{flex: 1}}>
       <Image

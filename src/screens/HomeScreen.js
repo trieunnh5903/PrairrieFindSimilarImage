@@ -20,7 +20,7 @@ const width = Dimensions.get('window').width;
 const HomeScreen = ({navigation}) => {
   const dispatch = useDispatch();
   const [timePress, setTimePress] = useState(0);
-  const image = useSelector(state => state.imageInGame);
+  const error = useSelector(state => state.error);
   const [modalLevelVisible, setModalLevelVisible] = useState(false);
   const bannerImage = useSelector(state => state.banner);
 
@@ -29,7 +29,7 @@ const HomeScreen = ({navigation}) => {
   };
 
   React.useEffect(() => {
-    if (!image.length) {
+    if (error) {
       navigation.dispatch(
         CommonActions.reset({
           index: 1,
@@ -38,7 +38,7 @@ const HomeScreen = ({navigation}) => {
       );
     }
     return () => {};
-  }, [image, navigation]);
+  }, [error, navigation]);
 
   const onTimePress = () => {
     setTimePress(pre => pre + 1);

@@ -12,7 +12,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   changeLoseImage,
@@ -22,6 +22,7 @@ import {
   updateImages,
   updatePair,
   changeBannerImage,
+  setError,
 } from '../redux/appSlice';
 import ImagePicker from 'react-native-image-crop-picker';
 
@@ -44,12 +45,14 @@ const AdminScreen = ({navigation}) => {
   const onSubmitPress = () => {
     const result = validate();
     if (result === false) {
+      dispatch(setError(true));
       return;
     }
     Alert.alert('Thông báo', 'Thay đổi thành công');
+    dispatch(setError(false));
   };
 
-  const validate = () => {
+  const validate = useCallback(() => {
     const pairRegex = /^(0(\.5)?|[1-9]\d*(\.5)?)$/;
     const timeRegex = /^(0|[1-9]\d*)(\.\d+)?$/;
     if (listImage.length === 0) {
@@ -106,12 +109,18 @@ const AdminScreen = ({navigation}) => {
       return false;
     }
     return true;
-  };
+  }, [bannerImage, imageLose, listImage, timeStore]);
 
   useEffect(() => {
     const backAction = () => {
-      navigation.navigate('home');
-      return true;
+      const result = validate();
+      if (result) {
+        dispatch(setError(false));
+        navigation.navigate('home');
+        return true;
+      }
+      dispatch(setError(true));
+      return false;
     };
 
     const backHandler = BackHandler.addEventListener(
@@ -120,7 +129,7 @@ const AdminScreen = ({navigation}) => {
     );
 
     return () => backHandler.remove();
-  }, [navigation]);
+  }, [dispatch, navigation, validate]);
 
   const handleSelectImageInGame = async () => {
     ImagePicker.openPicker({
