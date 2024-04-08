@@ -12,9 +12,9 @@ import {
 import React, {useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {changeLevel} from '../redux/appSlice';
-import {icons} from '../constant';
-import {colors} from '../asset/constant';
+import {icons} from '../asset';
 import {CommonActions} from '@react-navigation/native';
+import {ScreenName, colors} from '../constant';
 
 const width = Dimensions.get('window').width;
 const HomeScreen = ({navigation}) => {
@@ -56,7 +56,7 @@ const HomeScreen = ({navigation}) => {
   const handleLevelPress = index => {
     dispatch(changeLevel(index));
     setModalLevelVisible(false);
-    navigation.navigate('game');
+    navigation.navigate(ScreenName.CustomerInfoScreen);
   };
 
   return (

@@ -9,7 +9,8 @@ import {
   View,
 } from 'react-native';
 import React, {useState} from 'react';
-import {colors} from '../asset/constant';
+import {ScreenName} from '../constant/ScreenName';
+import {colors} from '../constant';
 
 const Password = ({navigation}) => {
   const [password, setPassword] = useState();
@@ -18,7 +19,7 @@ const Password = ({navigation}) => {
       Alert.alert('', 'Mật khẩu không đúng');
       return;
     }
-    navigation.navigate('admin');
+    navigation.navigate(ScreenName.ManagerScreen);
   };
   return (
     <Pressable onPress={() => Keyboard.dismiss()} style={styles.container}>
