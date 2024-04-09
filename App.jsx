@@ -3,7 +3,7 @@ import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {NavigationContainer} from '@react-navigation/native';
 import AdminScreen from './src/screens/AdminScreen';
-import Game from './src/screens/Game';
+import Game from './src/screens/GameScreen';
 import Password from './src/screens/Password';
 import {Provider} from 'react-redux';
 import {persistor, store} from './src/redux/store';
@@ -13,6 +13,7 @@ import LoseScreen from './src/screens/LoseScreen';
 import WinnerScreen from './src/screens/WinnerScreen';
 import {
   CustomerInfoScreen,
+  GameScreen,
   ImageScreen,
   ManagerScreen,
   TimeScreen,
@@ -62,7 +63,7 @@ const App = () => {
             />
             <Stack.Screen name="home" component={HomeScreen} />
             <Stack.Screen name="admin" component={AdminScreen} />
-            <Stack.Screen name="game" component={Game} />
+            <Stack.Screen name={ScreenName.GameScreen} component={GameScreen} />
             <Stack.Screen name="lose" component={LoseScreen} />
             <Stack.Screen name="win" component={WinnerScreen} />
           </Stack.Navigator>

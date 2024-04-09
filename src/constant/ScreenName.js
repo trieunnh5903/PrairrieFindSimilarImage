@@ -3,6 +3,7 @@ const ScreenName = {
   ManagerScreen: 'manager',
   TimeSettingScreen: 'time',
   CustomerInfoScreen: 'customer',
+  GameScreen: 'game',
 };
 
 export {ScreenName};

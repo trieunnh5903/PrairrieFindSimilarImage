@@ -27,7 +27,8 @@ import {
   setError,
 } from '../../redux/appSlice';
 import {icons} from '../../asset';
-import {Padding} from '../../components';
+import {Padding, AppTextInput} from '../../components';
+import {globalStyle} from '../../constant';
 
 const {width} = Dimensions.get('window');
 const ImageScreen = ({navigation}) => {
@@ -72,6 +73,10 @@ const ImageScreen = ({navigation}) => {
         const element = listGift[index];
         if (!element.giftUri) {
           Alert.alert('Thông báo', 'Hình ảnh phần quà trống');
+          return false;
+        }
+        if (!element.name) {
+          Alert.alert('Thông báo', 'Tên phần quà trống');
           return false;
         }
         const pairs = element?.pair;
@@ -198,6 +203,18 @@ const ImageScreen = ({navigation}) => {
       .catch(() => {});
   };
 
+  const onChangeNameOfGift = (uri, text) => {
+    const newListImage = listImage.map(item => {
+      if (item.selected && item.uri === uri) {
+        return {...item, name: text};
+      } else {
+        return item;
+      }
+    });
+
+    dispatch(updateImages(newListImage));
+  };
+
   const onPairChange = (text, imageUri, level) => {
     dispatch(updatePair({value: text, uri: imageUri, level}));
   };
@@ -249,13 +266,88 @@ const ImageScreen = ({navigation}) => {
           )}
         </View>
 
+        {/* image winner */}
+        {listImage.filter(i => i.selected === true).length > 0 && (
+          <View>
+            <Padding />
+            <Text style={[styles.textBlack, styles.textLabel]}>
+              Hình ảnh phần quà
+            </Text>
+            <View style={[{gap: 20}, styles.mt_16]}>
+              {listImage
+                .filter(i => i.selected === true)
+                .map((image, index) => {
+                  if (image.selected) {
+                    return (
+                      <View
+                        style={styles.giftContainer}
+                        key={'qua' + image.uri}>
+                        <Text style={globalStyle.textBlack}>
+                          Phần quà số {index + 1}
+                        </Text>
+                        <View style={{flex: 1, alignItems: 'center'}}>
+                          <Text
+                            style={[globalStyle.textButton, globalStyle.mt_16]}>
+                            Hình ảnh trong game
+                          </Text>
+                          <View style={[styles.giftWrapper, {width: '40%'}]}>
+                            <Image
+                              resizeMode="contain"
+                              source={{uri: image.uri}}
+                              style={styles.gift}
+                            />
+                          </View>
+
+                          <Image
+                            resizeMode="contain"
+                            style={styles.downArrow}
+                            source={icons.right_arrow}
+                          />
+
+                          <Text style={globalStyle.textButton}>
+                            Hình ảnh phần quà
+                          </Text>
+                          <TouchableOpacity
+                            onPress={() => handleImageGift(image.uri)}
+                            activeOpacity={0.8}
+                            style={[styles.giftWrapper, {width: '40%'}]}>
+                            {image.giftUri ? (
+                              <Image
+                                resizeMode="contain"
+                                source={{uri: image.giftUri}}
+                                style={styles.gift}
+                              />
+                            ) : (
+                              <View style={[styles.gift, styles.giftEmpty]}>
+                                <Text style={styles.textGray}>Chọn ảnh</Text>
+                              </View>
+                            )}
+                          </TouchableOpacity>
+                        </View>
+
+                        <AppTextInput
+                          style={styles.input}
+                          placeholder="Tên phần quà bằng chữ"
+                          placeholderTextColor={'gray'}
+                          onChangeText={text =>
+                            onChangeNameOfGift(image.uri, text)
+                          }
+                        />
+                      </View>
+                    );
+                  }
+                })}
+            </View>
+            <Padding />
+          </View>
+        )}
+
         {/* number of pair */}
         <View>
           {listImage.find(i => i.selected) && (
             <>
-              <Padding />
               <Text style={[styles.textBlack, styles.textLabel]}>
-                Số cặp xuất hiện
+                Số cặp xuất hiện trong game
               </Text>
             </>
           )}
@@ -282,10 +374,10 @@ const ImageScreen = ({navigation}) => {
                       {[1, 2, 3].map(level => {
                         const label =
                           level === 1
-                            ? 'Dễ'
+                            ? 'Màn dễ'
                             : level === 2
-                            ? 'Trung bình'
-                            : 'Khó';
+                            ? 'Màn trung bình'
+                            : 'Màn khó';
                         return (
                           <View key={'level' + level}>
                             <Text style={[styles.textBlack]}>{label}</Text>
@@ -323,66 +415,14 @@ const ImageScreen = ({navigation}) => {
               }
             })}
 
-            {listImage.length <= 0 && !imageLose && (
+            {/* {listImage.length <= 0 && !imageLose && (
               <Text style={styles.textGray}>(Trống)</Text>
-            )}
+            )} */}
           </View>
-        </View>
-
-        {/* image winner */}
-        <View>
           <Padding />
-          <Text style={[styles.textBlack, styles.textLabel]}>
-            Hình ảnh chiến thắng
-          </Text>
-          <View style={[styles.gap_6, styles.mt_16]}>
-            {listImage.map(image => {
-              if (image.selected) {
-                return (
-                  <View style={styles.rowGift} key={'qua' + image.uri}>
-                    <View style={styles.giftWrapper}>
-                      <Image
-                        resizeMode="contain"
-                        source={{uri: image.uri}}
-                        style={styles.gift}
-                      />
-                    </View>
-
-                    <Image
-                      resizeMode="contain"
-                      style={{width: width * 0.1, height: width * 0.1}}
-                      source={icons.right_arrow}
-                    />
-
-                    <TouchableOpacity
-                      onPress={() => handleImageGift(image.uri)}
-                      activeOpacity={0.8}
-                      style={[styles.giftWrapper]}>
-                      {image.giftUri ? (
-                        <Image
-                          resizeMode="contain"
-                          source={{uri: image.giftUri}}
-                          style={styles.gift}
-                        />
-                      ) : (
-                        <View style={[styles.gift, styles.giftEmpty]}>
-                          <Text style={styles.textGray}>Chọn ảnh</Text>
-                        </View>
-                      )}
-                    </TouchableOpacity>
-                  </View>
-                );
-              }
-            })}
-            {listImage.filter(i => i.selected === true).length > 0 ===
-              false && (
-              <Text style={[styles.mv_6, styles.textGray]}>(Trống)</Text>
-            )}
-          </View>
         </View>
 
         {/* image lose */}
-        <Padding />
         <View style={styles.gap_16}>
           <View style={styles.selectImageWrapper}>
             <Text style={[styles.textBlack, styles.textLabel]}>
@@ -488,6 +528,20 @@ const ImageScreen = ({navigation}) => {
 export default ImageScreen;
 
 const styles = StyleSheet.create({
+  downArrow: {
+    width: width * 0.1,
+    height: width * 0.1,
+    marginVertical: 16,
+    transform: [{rotate: '90deg'}],
+  },
+
+  giftContainer: {
+    borderColor: 'lightgray',
+    borderWidth: 1,
+    borderRadius: 6,
+    padding: 16,
+  },
+
   textTimeLevel: {flex: 1, textAlignVertical: 'center'},
   mr_16: {marginRight: 16},
   mh_16: {marginHorizontal: 16},
@@ -610,7 +664,9 @@ const styles = StyleSheet.create({
   },
 
   input: {
-    color: 'black',
-    textAlign: 'center',
+    borderColor: 'black',
+    borderWidth: 1,
+    marginVertical: 16,
+    borderRadius: 6,
   },
 });

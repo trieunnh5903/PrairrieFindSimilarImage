@@ -25,6 +25,16 @@ const globalStyle = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
   },
+  mr_16: {marginRight: 16},
+  mh_16: {marginHorizontal: 16},
+  gap_10: {gap: 10},
+  mv_6: {marginVertical: 6},
+  mt_16: {
+    marginTop: 16,
+  },
+  gap_6: {gap: 6},
+  gap_16: {gap: 16},
+  gap_50: {gap: 50},
 });
 
 export {globalStyle};

@@ -10,20 +10,20 @@ const initialState = {
     {
       key: 1,
       name: 'Dễ',
-      timeOffImage: '0',
-      timePlay: '0',
+      timeOffImage: '0.9',
+      timePlay: '16',
     },
     {
       key: 2,
       name: 'Trung bình',
-      timeOffImage: '0',
-      timePlay: '0',
+      timeOffImage: '0.9',
+      timePlay: '24',
     },
     {
       key: 3,
       name: 'Khó',
-      timeOffImage: '0',
-      timePlay: '0',
+      timeOffImage: '0.9',
+      timePlay: '33',
     },
   ],
 };

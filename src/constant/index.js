@@ -4,4 +4,5 @@ const colors = {
 
 export * from './globalStyle';
 export * from './ScreenName';
+export * from './storageKey';
 export {colors};
