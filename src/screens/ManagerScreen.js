@@ -3,10 +3,36 @@ import React from 'react';
 import {colors, globalStyle, storageKey} from '../constant';
 import {ScreenName} from '../constant/ScreenName';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import XLSX, {utils} from 'xlsx';
+import * as ScopedStorage from 'react-native-scoped-storage';
 
 const ManagerScreen = ({navigation}) => {
-  const onHistoryPress = () => {
-    loadCustomerList();
+  const generateDataXlsx = async () => {
+    const customerList = await loadCustomerList();
+    // console.log(customerList);
+    const ws = utils.json_to_sheet(customerList);
+
+    /* build new workbook */
+    const wb = utils.book_new();
+    utils.book_append_sheet(wb, ws, 'SheetJS');
+
+    return wb;
+  };
+
+  const onHistoryPress = async () => {
+    try {
+      const workbook = await generateDataXlsx();
+      const b64 = XLSX.write(workbook, {type: 'base64', bookType: 'xlsx'});
+      const file = await ScopedStorage.createDocument(
+        'Prairie Similar Image Customer History.xlsx',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        b64,
+        'base64',
+      );
+      console.log('writeFile', file);
+    } catch (error) {
+      console.log('writeFile', error);
+    }
   };
 
   const loadCustomerList = async () => {
@@ -15,8 +41,9 @@ const ManagerScreen = ({navigation}) => {
         storageKey.customerList,
       );
       if (storedCustomerList !== null) {
-        console.log(JSON.parse(storedCustomerList));
+        return JSON.parse(storedCustomerList);
       }
+      return [];
     } catch (error) {
       console.error('Error loading customer list:', error);
     }

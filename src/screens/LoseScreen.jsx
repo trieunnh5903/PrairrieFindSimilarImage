@@ -3,6 +3,7 @@ import React, {useEffect} from 'react';
 import {useSelector} from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {storageKey} from '../constant';
+import {getTimeNow} from '../utils';
 
 const LoseScreen = ({navigation}) => {
   const foodStore = useSelector(state => state.loseImage);
@@ -19,8 +20,8 @@ const LoseScreen = ({navigation}) => {
         // console.log('lastCustomer', lastCustomer);
         const updatedCustomer = {
           ...lastCustomer,
-          result: 'Chúc bạn may mắn lần sau',
-          updatedAt: new Date().getTime(),
+          ['Ket qua']: 'Chúc bạn may mắn lần sau',
+          ['Thoi gian choi']: getTimeNow(),
         };
         // console.log('updatedCustomer', updatedCustomer);
 

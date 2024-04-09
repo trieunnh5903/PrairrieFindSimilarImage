@@ -56,14 +56,23 @@ const CustomerInfoScreen = ({navigation}) => {
 
   const saveCustomerInformation = async () => {
     try {
-      const newCustomer = {
-        number: customerList.length + 1,
-        invoiceCode,
-        customerName,
-        phoneNumber,
-        createdAt: new Date().getTime(),
-      };
+      // Lấy ngày, tháng, năm
+      const date = new Date();
+      const day = date.getDate();
+      const month = date.getMonth() + 1;
+      const year = date.getFullYear();
+      // Lấy giờ, phút, giây
+      const hours = date.getHours();
+      const minutes = date.getMinutes();
+      const seconds = date.getSeconds();
+      const formattedDateTime = `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
 
+      const newCustomer = {
+        ['Ma hoa don']: invoiceCode,
+        ['Ten khach hang']: customerName,
+        ['So dien thoai']: phoneNumber,
+        ['Ngay tao']: formattedDateTime,
+      };
       const updatedCustomerList = [...customerList, newCustomer];
       await AsyncStorage.setItem(
         storageKey.customerList,
@@ -78,23 +87,9 @@ const CustomerInfoScreen = ({navigation}) => {
         'Failed to save customer information. Please try again.',
       );
     }
-
     // Tạo đối tượng Date với timestamp đã cung cấp
     // const date = new Date(1712569973142);
-
-    // // Lấy ngày, tháng, năm
-    // const day = date.getDate();
-    // const month = date.getMonth() + 1;
-    // const year = date.getFullYear();
-
-    // // Lấy giờ, phút, giây
-    // const hours = date.getHours();
-    // const minutes = date.getMinutes();
-    // const seconds = date.getSeconds();
-
-    // const formattedDateTime = `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
     // console.log(formattedDateTime);
-
     // Thêm khách hàng mới vào danh sách
     // setCustomerList([...customerList, newCustomer]);
     // Lưu danh sách khách hàng vào AsyncStorage
