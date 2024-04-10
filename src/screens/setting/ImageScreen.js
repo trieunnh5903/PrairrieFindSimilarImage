@@ -327,6 +327,7 @@ const ImageScreen = ({navigation}) => {
 
                         <AppTextInput
                           style={styles.input}
+                          value={image.name}
                           placeholder="Tên phần quà bằng chữ"
                           placeholderTextColor={'gray'}
                           onChangeText={text =>
@@ -668,5 +669,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginVertical: 16,
     borderRadius: 6,
+    paddingHorizontal: 16,
   },
 });

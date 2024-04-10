@@ -11,3 +11,13 @@ export const getTimeNow = () => {
   const formattedDateTime = `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
   return formattedDateTime;
 };
+
+export const getDateNow = () => {
+  // Lấy ngày, tháng, năm
+  const date = new Date();
+  const day = date.getDate();
+  const month = date.getMonth() + 1;
+  const year = date.getFullYear();
+  const formattedDateTime = `${day}/${month}/${year}`;
+  return formattedDateTime;
+};

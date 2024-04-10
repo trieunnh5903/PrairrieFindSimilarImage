@@ -17,13 +17,11 @@ const LoseScreen = ({navigation}) => {
         const storedCustomerList = JSON.parse(storedCustomerListJSON);
 
         const lastCustomer = storedCustomerList[storedCustomerList.length - 1];
-        // console.log('lastCustomer', lastCustomer);
         const updatedCustomer = {
           ...lastCustomer,
           ['Ket qua']: 'Chúc bạn may mắn lần sau',
           ['Thoi gian choi']: getTimeNow(),
         };
-        // console.log('updatedCustomer', updatedCustomer);
 
         const updatedCustomerList = [
           ...storedCustomerList.slice(0, storedCustomerList.length - 1),

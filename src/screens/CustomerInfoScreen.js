@@ -87,22 +87,6 @@ const CustomerInfoScreen = ({navigation}) => {
         'Failed to save customer information. Please try again.',
       );
     }
-    // Tạo đối tượng Date với timestamp đã cung cấp
-    // const date = new Date(1712569973142);
-    // console.log(formattedDateTime);
-    // Thêm khách hàng mới vào danh sách
-    // setCustomerList([...customerList, newCustomer]);
-    // Lưu danh sách khách hàng vào AsyncStorage
-    // await AsyncStorage.setItem(
-    //   'customerList',
-    //   JSON.stringify([...customerList, newCustomer]),
-    // );
-    // // Thông báo xác nhận thành công
-    // Alert.alert('Success', 'Customer information saved successfully.');
-    // // Reset trạng thái của các ô nhập văn bản
-    // setInvoiceCode('');
-    // setCustomerName('');
-    // setPhoneNumber('');
   };
 
   const isDuplicateInvoiceCode = code => {
@@ -110,7 +94,7 @@ const CustomerInfoScreen = ({navigation}) => {
   };
 
   const isValidPhoneNumber = phoneNumber => {
-    return /^\d{10}$/.test(phoneNumber);
+    return /^0\d{9}$/.test(phoneNumber);
   };
 
   return (

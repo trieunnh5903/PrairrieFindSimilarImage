@@ -4,6 +4,7 @@ const ScreenName = {
   TimeSettingScreen: 'time',
   CustomerInfoScreen: 'customer',
   GameScreen: 'game',
+  PasswordScreen: 'password',
 };
 
 export {ScreenName};

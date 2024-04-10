@@ -1,5 +1,6 @@
 import {
   Alert,
+  BackHandler,
   Keyboard,
   Pressable,
   StyleSheet,
@@ -8,11 +9,29 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {ScreenName} from '../constant/ScreenName';
 import {colors} from '../constant';
+import {useSelector} from 'react-redux';
 
-const Password = ({navigation}) => {
+const PasswordScreen = ({navigation}) => {
+  const error = useSelector(state => state.error);
+  useEffect(() => {
+    const backAction = () => {
+      if (error === true) {
+        return true;
+      }
+      return false;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+
+    return () => backHandler.remove();
+  }, [error, navigation]);
+
   const [password, setPassword] = useState();
   const onPress = () => {
     if (password !== '123456789') {
@@ -21,6 +40,7 @@ const Password = ({navigation}) => {
     }
     navigation.navigate(ScreenName.ManagerScreen);
   };
+
   return (
     <Pressable onPress={() => Keyboard.dismiss()} style={styles.container}>
       <Text style={{color: 'white'}}>Nhập mật khẩu</Text>
@@ -42,7 +62,7 @@ const Password = ({navigation}) => {
   );
 };
 
-export default Password;
+export default PasswordScreen;
 
 const styles = StyleSheet.create({
   button: {

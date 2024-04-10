@@ -5644,6 +5644,11 @@ react-native-image-crop-picker@^0.40.3:
   resolved "https://registry.npmjs.org/react-native-image-crop-picker/-/react-native-image-crop-picker-0.40.3.tgz"
   integrity sha512-45PKcTnsnLS+E36YwoXutllQdRSOuOsMN0IRcAcwsFXOuAQIOtugXlAuGGL28JHKb/ATaSSPvqCSrdG65Jv3GA==
 
+react-native-mail@^6.1.1:
+  version "6.1.1"
+  resolved "https://registry.npmjs.org/react-native-mail/-/react-native-mail-6.1.1.tgz"
+  integrity sha512-pTs180wwyh7hN/iyTC9SfOX579U4YhDlHOLxi47IGvhPJENqO/QFdBq+wWKxyhNqdQuVSy+LoeIxLreWnIeYmg==
+
 react-native-reanimated@^3.7.2:
   version "3.7.2"
   resolved "https://registry.npmjs.org/react-native-reanimated/-/react-native-reanimated-3.7.2.tgz"
