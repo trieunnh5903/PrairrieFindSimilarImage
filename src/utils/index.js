@@ -18,6 +18,8 @@ export const getDateNow = () => {
   const day = date.getDate();
   const month = date.getMonth() + 1;
   const year = date.getFullYear();
-  const formattedDateTime = `${day}/${month}/${year}`;
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+  const formattedDateTime = `${day}_${month}_${year} ${hours}h${minutes}m`;
   return formattedDateTime;
 };

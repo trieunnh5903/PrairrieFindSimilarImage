@@ -90,7 +90,7 @@ const CustomerInfoScreen = ({navigation}) => {
   };
 
   const isDuplicateInvoiceCode = code => {
-    return customerList.some(customer => customer.invoiceCode === code);
+    return customerList.some(customer => customer['Ma hoa don'] === code);
   };
 
   const isValidPhoneNumber = phoneNumber => {

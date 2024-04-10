@@ -1,12 +1,5 @@
-import {
-  Alert,
-  PermissionsAndroid,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import React, {useEffect} from 'react';
+import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React from 'react';
 import {colors, globalStyle, storageKey} from '../constant';
 import {ScreenName} from '../constant/ScreenName';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -29,31 +22,51 @@ const ManagerScreen = ({navigation}) => {
 
   const requestStoragePermission = async () => {
     try {
-      const storagePermission =
-        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE;
-      const granted = await PermissionsAndroid.request(storagePermission, {
-        title: 'Storage Permission',
-        message: 'This app needs access to your storage to save data.',
-        buttonNeutral: 'Ask Me Later',
-        buttonNegative: 'Cancel',
-        buttonPositive: 'OK',
-      });
-
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        return true;
-      } else {
-        console.log('Storage permission denied');
+      const persistedUris = await ScopedStorage.getPersistedUriPermissions();
+      if (persistedUris.length > 0) {
+        return;
       }
-      return false;
+      Alert.alert(
+        'Quyền truy cập bộ nhớ',
+        'Ứng dụng này cần quyền truy cập vào bộ nhớ của bạn để lưu dữ liệu tạm thời',
+        [
+          {
+            text: 'Hủy',
+            onPress: () => {
+              return;
+            },
+            style: 'cancel',
+          },
+          {
+            text: 'OK',
+            onPress: async () => {
+              const dir = await ScopedStorage.openDocumentTree(true);
+              if (!dir) {
+                return;
+              } // User cancelled
+              await AsyncStorage.setItem(
+                storageKey.userDataDirectory,
+                JSON.stringify(dir),
+              );
+              const file = await exportFile();
+              const result = sendMail(file);
+              if (result) {
+                clearHistory();
+              }
+            },
+          },
+        ],
+      );
     } catch (err) {
       console.log(err);
     }
   };
 
-  const onHistoryPress = async () => {
+  const exportFile = async () => {
     try {
-      const request = await requestStoragePermission();
-      if (!request) {
+      const dirJson = await AsyncStorage.getItem(storageKey.userDataDirectory);
+      const dir = dirJson != null ? JSON.parse(dirJson) : null;
+      if (!dir) {
         return;
       }
       const workbook = await generateDataXlsx();
@@ -62,23 +75,39 @@ const ManagerScreen = ({navigation}) => {
         return;
       }
       const b64 = XLSX.write(workbook, {type: 'base64', bookType: 'xlsx'});
-      const file = await ScopedStorage.createDocument(
-        `prairie_similar_image_customer_history_${getDateNow()}.xlsx`,
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      const file = await ScopedStorage.writeFile(
+        dir.uri,
         b64,
+        `prairie_similar_image_customer_history ${getDateNow()}.xlsx`,
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         'base64',
       );
-      sendMail(file);
+      return {
+        uri: file,
+        mime: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      };
+    } catch (error) {
+      console.log('exportFile', error);
+    }
+  };
+
+  const onHistoryPress = async () => {
+    try {
+      requestStoragePermission();
+      const file = await exportFile();
+      const result = sendMail(file);
+      if (result) {
+        clearHistory();
+      }
     } catch (error) {
       console.log('writeFile', error);
     }
   };
 
   const sendMail = file => {
-    if (!file) {
-      return;
+    if (!file.uri || !file.mime) {
+      return false;
     }
-    let sendEmailError = false;
     Mailer.mail(
       {
         subject: `Prairie - Báo cáo lịch sử chơi game xếp hình ${getTimeNow()}`,
@@ -94,21 +123,18 @@ const ManagerScreen = ({navigation}) => {
         ],
       },
       (error, event) => {
+        console.log('sendMail error', error);
+        console.log('sendMail event', event);
         Alert.alert('Lỗi', 'Gửi email gặp lỗi');
-        sendEmailError = true;
       },
     );
-    if (sendEmailError === false) {
-      clearHistory(file.uri);
-    }
+
+    return true;
   };
 
-  const clearHistory = async uriFile => {
+  const clearHistory = async () => {
     try {
       await AsyncStorage.removeItem(storageKey.customerList);
-      if (uriFile) {
-        await ScopedStorage.deleteFile(uriFile);
-      }
     } catch (error) {
       console.log('clearHistory error', error);
     }
