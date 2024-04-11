@@ -8,12 +8,12 @@ import {
   GameScreen,
   HistoryScreen,
   ImageScreen,
+  LocationScreen,
   ManagerScreen,
   PasswordScreen,
   TimeScreen,
 } from '../screens';
 import HomeScreen from '../screens/HomeScreen';
-import AdminScreen from '../screens/AdminScreen';
 import LoseScreen from '../screens/LoseScreen';
 import WinnerScreen from '../screens/WinnerScreen';
 import {useSelector} from 'react-redux';
@@ -49,12 +49,13 @@ const Application = () => {
         <Stack.Screen
           name={ScreenName.HistoryScreen}
           component={HistoryScreen}
-          options={{headerShown: true}}
+          options={{headerShown: true, headerTitle: 'Lịch sử khách hàng'}}
         />
 
         <Stack.Screen
           name={ScreenName.ImageSettingScreen}
           component={ImageScreen}
+          options={{headerShown: true}}
         />
         <Stack.Screen
           name={ScreenName.TimeSettingScreen}
@@ -63,12 +64,19 @@ const Application = () => {
         />
 
         <Stack.Screen
+          name={ScreenName.LocationScreen}
+          component={LocationScreen}
+          options={{
+            headerShown: true,
+          }}
+        />
+
+        <Stack.Screen
           name={ScreenName.CustomerInfoScreen}
           component={CustomerInfoScreen}
           options={{headerShown: true, headerTitle: 'Thông tin khách hàng'}}
         />
         <Stack.Screen name="home" component={HomeScreen} />
-        <Stack.Screen name="admin" component={AdminScreen} />
         <Stack.Screen name={ScreenName.GameScreen} component={GameScreen} />
         <Stack.Screen name="lose" component={LoseScreen} />
         <Stack.Screen name="win" component={WinnerScreen} />

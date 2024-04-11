@@ -59,19 +59,6 @@ const PasswordScreen = ({navigation}) => {
         style={[styles.button, styles.buttonClose]}>
         <Text style={{textAlign: 'center', color: 'black'}}>Thay đổi</Text>
       </TouchableOpacity>
-
-      <View style={globalStyle.flex_1} />
-      <View style={{gap: 20}}>
-        <TouchableOpacity style={globalStyle.button}>
-          <Text style={[globalStyle.textButton]}>Xuất lịch sử chơi game</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={globalStyle.button}>
-          <Text style={[globalStyle.textButton, {color: 'red'}]}>
-            Xóa lịch sử chơi game
-          </Text>
-        </TouchableOpacity>
-      </View>
     </Pressable>
   );
 };

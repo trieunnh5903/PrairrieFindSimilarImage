@@ -1,6 +1,7 @@
 import {createSlice} from '@reduxjs/toolkit';
 
 const initialState = {
+  location: '',
   error: true,
   level: 1,
   imageInGame: [],
@@ -32,6 +33,10 @@ export const appSlice = createSlice({
   name: 'counter',
   initialState,
   reducers: {
+    changeLocation: (state, action) => {
+      state.location = action.payload;
+    },
+
     setError: (state, action) => {
       state.error = action.payload;
     },
@@ -86,6 +91,7 @@ export const appSlice = createSlice({
 
 // Action creators are generated for each case reducer function
 export const {
+  changeLocation,
   setError,
   addImages,
   updateImages,

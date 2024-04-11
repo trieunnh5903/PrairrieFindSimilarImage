@@ -23,3 +23,17 @@ export const getDateNow = () => {
   const formattedDateTime = `${day}_${month}_${year} ${hours}h${minutes}p`;
   return formattedDateTime;
 };
+
+export const formatDate = date => {
+  if (!date) {
+    return;
+  }
+  // Lấy ngày, tháng, năm
+  const day = date.getDate();
+  const month = date.getMonth() + 1;
+  const year = date.getFullYear();
+  const formattedDateTime = `${day}/${month}/${year}`;
+  return formattedDateTime;
+};
+
+export * from './storage';

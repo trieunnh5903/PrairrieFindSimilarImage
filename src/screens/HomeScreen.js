@@ -29,13 +29,6 @@ const HomeScreen = ({navigation}) => {
 
   React.useEffect(() => {
     if (error) {
-      // navigation.dispatch(
-      //   CommonActions.reset({
-      //     index: 1,
-      //     routes: [{name: 'password'}],
-      //   }),
-      //   // CommonActions.navigate({name: ''})
-      // );
       navigation.navigate(ScreenName.PasswordScreen);
     }
     return () => {};

@@ -26,9 +26,9 @@ import {
   changeBannerImage,
   setError,
 } from '../../redux/appSlice';
-import {icons} from '../../asset';
+import {CheckedSvg, DownSvg, icons} from '../../asset';
 import {Padding, AppTextInput} from '../../components';
-import {globalStyle} from '../../constant';
+import {colors, globalStyle} from '../../constant';
 
 const {width} = Dimensions.get('window');
 const ImageScreen = ({navigation}) => {
@@ -220,7 +220,7 @@ const ImageScreen = ({navigation}) => {
   };
 
   return (
-    <ScrollView style={styles.scrollView}>
+    <ScrollView>
       <Pressable onPress={() => Keyboard.dismiss()} style={styles.container}>
         {/* imgae in game */}
         <View style={[styles.gap_6, {paddingHorizontal: 16}]}>
@@ -229,7 +229,7 @@ const ImageScreen = ({navigation}) => {
               Hình ảnh sẽ lật lên trong game
             </Text>
 
-            <Text style={[styles.textGray]}>
+            <Text style={[globalStyle.textWhite]}>
               Ấn vào hình ảnh để chuyển thành ảnh có quà
             </Text>
 
@@ -256,7 +256,12 @@ const ImageScreen = ({navigation}) => {
                     style={styles.imageContainer}
                   />
                   {item.selected && (
-                    <Image source={icons.selected} style={styles.selected} />
+                    <CheckedSvg
+                      width={32}
+                      height={32}
+                      style={styles.selected}
+                      fill={'red'}
+                    />
                   )}
                 </TouchableOpacity>
               );
@@ -283,13 +288,13 @@ const ImageScreen = ({navigation}) => {
                         <View
                           style={styles.giftContainer}
                           key={'qua' + image.uri}>
-                          <Text style={globalStyle.textBlack}>
+                          <Text style={globalStyle.textWhiteBold}>
                             Phần quà số {index + 1}
                           </Text>
                           <View style={{flex: 1, alignItems: 'center'}}>
                             <Text
                               style={[
-                                globalStyle.textButton,
+                                globalStyle.textWhite,
                                 globalStyle.mt_16,
                               ]}>
                               Hình ảnh trong game
@@ -306,9 +311,10 @@ const ImageScreen = ({navigation}) => {
                               resizeMode="contain"
                               style={styles.downArrow}
                               source={icons.right_arrow}
+                              tintColor={'white'}
                             />
 
-                            <Text style={globalStyle.textButton}>
+                            <Text style={globalStyle.textWhite}>
                               Hình ảnh phần quà
                             </Text>
                             <TouchableOpacity
@@ -323,7 +329,7 @@ const ImageScreen = ({navigation}) => {
                                 />
                               ) : (
                                 <View style={[styles.gift, styles.giftEmpty]}>
-                                  <Text style={styles.textGray}>Chọn ảnh</Text>
+                                  <Text style={styles.textBlack}>Chọn ảnh</Text>
                                 </View>
                               )}
                             </TouchableOpacity>
@@ -333,7 +339,7 @@ const ImageScreen = ({navigation}) => {
                             style={styles.input}
                             value={image.name}
                             placeholder="Tên phần quà bằng chữ"
-                            placeholderTextColor={'gray'}
+                            placeholderTextColor={'rgba(0,0,0,0.5)'}
                             onChangeText={text =>
                               onChangeNameOfGift(image.uri, text)
                             }
@@ -374,6 +380,7 @@ const ImageScreen = ({navigation}) => {
                       resizeMode="contain"
                       style={{width: width * 0.1, height: width * 0.1}}
                       source={icons.right_arrow}
+                      tintColor={'white'}
                     />
 
                     <View style={[styles.flex_1, styles.gap_10]}>
@@ -386,7 +393,9 @@ const ImageScreen = ({navigation}) => {
                             : 'Màn khó';
                         return (
                           <View key={'level' + level}>
-                            <Text style={[styles.textBlack]}>{label}</Text>
+                            <Text style={[globalStyle.textWhiteBold]}>
+                              {label}
+                            </Text>
                             <View style={[styles.flex_1]}>
                               <View style={styles.inputWrapper}>
                                 <TextInput
@@ -404,10 +413,11 @@ const ImageScreen = ({navigation}) => {
                                   style={[
                                     styles.flex_1,
                                     styles.mh_16,
-                                    styles.textBlack,
+                                    globalStyle.textWhiteBold,
                                   ]}
                                 />
-                                <Text style={[styles.textBlack, styles.mr_16]}>
+                                <Text
+                                  style={[globalStyle.textWhite, styles.mr_16]}>
                                   Cặp
                                 </Text>
                               </View>
@@ -522,7 +532,6 @@ const styles = StyleSheet.create({
   gap_6: {gap: 6},
   gap_16: {gap: 16},
   gap_50: {gap: 50},
-  scrollView: {backgroundColor: 'white'},
   timeBodyContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -539,6 +548,7 @@ const styles = StyleSheet.create({
   textGray: {fontSize: 16, color: 'gray'},
   textLabel: {
     fontSize: 20,
+    color: 'white',
   },
   giftEmpty: {
     // borderColor: 'black',
@@ -546,7 +556,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     // elevation: 4,
   },
-  giftWrapper: {flex: 1, borderRadius: 6, borderWidth: 1},
+  giftWrapper: {
+    flex: 1,
+    backgroundColor: 'white',
+    borderRadius: 6,
+    marginTop: 6,
+  },
   gift: {width: '100%', aspectRatio: 1, borderRadius: 6},
   rowGift: {
     gap: 16,
@@ -555,15 +570,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   selected: {
-    borderWidth: 2,
-    width: '20%',
-    height: '20%',
     position: 'absolute',
     top: 10,
     right: 10,
     padding: 4,
-    backgroundColor: 'white',
-    borderRadius: width,
   },
   imageWrapper: {
     gap: 10,
@@ -578,13 +588,14 @@ const styles = StyleSheet.create({
     height: (width - 32) / 2 - 10,
     borderRadius: 6,
     borderWidth: 1,
+    backgroundColor: 'white',
   },
 
   imageContainer: {width: '100%', height: '100%'},
 
   selectedImage: {
     borderWidth: 1,
-    borderColor: 'rgb(37, 150, 190)',
+    borderColor: 'red',
   },
 
   textBlack: {
@@ -594,7 +605,7 @@ const styles = StyleSheet.create({
   },
 
   textStyle: {
-    color: 'white',
+    color: 'black',
     textAlign: 'center',
     fontSize: 16,
   },
@@ -609,7 +620,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 10,
     elevation: 2,
-    backgroundColor: '#2196F3',
+    backgroundColor: 'white',
   },
 
   buttonClose: {
@@ -620,7 +631,7 @@ const styles = StyleSheet.create({
   container: {
     paddingVertical: 16,
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: colors.primary,
     gap: 16,
   },
 
@@ -630,10 +641,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     flexDirection: 'row',
     alignItems: 'center',
+    borderColor: 'white',
   },
 
   input: {
-    borderColor: 'black',
+    borderColor: 'white',
+    color: 'white',
+    fontWeight: 'bold',
     borderWidth: 1,
     marginVertical: 16,
     borderRadius: 6,

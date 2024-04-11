@@ -1,6 +1,9 @@
 import {StyleSheet} from 'react-native';
 
 const globalStyle = StyleSheet.create({
+  row: {
+    flexDirection: 'row',
+  },
   container: {
     flex: 1,
     padding: 16,
@@ -22,6 +25,15 @@ const globalStyle = StyleSheet.create({
   textGray: {fontSize: 16, color: 'gray'},
   textBlack: {
     color: 'black',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  textWhite: {
+    color: 'white',
+    fontSize: 16,
+  },
+  textWhiteBold: {
+    color: 'white',
     fontWeight: 'bold',
     fontSize: 16,
   },

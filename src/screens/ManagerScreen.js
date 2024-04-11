@@ -7,6 +7,7 @@ import XLSX, {utils} from 'xlsx';
 import * as ScopedStorage from 'react-native-scoped-storage';
 import Mailer from 'react-native-mail';
 import {getDateNow, getTimeNow} from '../utils';
+import {AppButton} from '../components';
 
 const ManagerScreen = ({navigation}) => {
   const generateDataXlsx = async () => {
@@ -184,7 +185,12 @@ const ManagerScreen = ({navigation}) => {
         <Text style={[globalStyle.textButton]}>Thời gian chơi game</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={onHistoryPress} style={globalStyle.button}>
+      <AppButton
+        label="Điểm bán hiện tại"
+        onPress={() => navigation.navigate(ScreenName.LocationScreen)}
+      />
+
+      {/* <TouchableOpacity onPress={onHistoryPress} style={globalStyle.button}>
         <Text style={[globalStyle.textButton]}>Xuất lịch sử chơi game</Text>
       </TouchableOpacity>
 
@@ -192,7 +198,7 @@ const ManagerScreen = ({navigation}) => {
         <Text style={[globalStyle.textButton, {color: 'red'}]}>
           Xóa lịch sử chơi game
         </Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </View>
   );
 };

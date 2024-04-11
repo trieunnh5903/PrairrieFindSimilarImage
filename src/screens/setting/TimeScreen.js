@@ -46,7 +46,7 @@ const TimeScreen = () => {
         {timeStore.map((item, index) => {
           return (
             <View key={item.key} style={styles.timeBodyContainer}>
-              <Text style={[styles.textTimeLevel, globalStyle.textGray]}>
+              <Text style={[styles.textTimeLevel, globalStyle.textBlack]}>
                 {item.name}
               </Text>
               <TextInput
