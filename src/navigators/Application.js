@@ -6,6 +6,7 @@ import {ScreenName, colors} from '../constant';
 import {
   CustomerInfoScreen,
   GameScreen,
+  HistoryScreen,
   ImageScreen,
   ManagerScreen,
   PasswordScreen,
@@ -44,6 +45,13 @@ const Application = () => {
           component={ManagerScreen}
           options={{headerShown: true}}
         />
+
+        <Stack.Screen
+          name={ScreenName.HistoryScreen}
+          component={HistoryScreen}
+          options={{headerShown: true}}
+        />
+
         <Stack.Screen
           name={ScreenName.ImageSettingScreen}
           component={ImageScreen}

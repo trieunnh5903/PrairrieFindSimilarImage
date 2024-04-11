@@ -49,10 +49,7 @@ const ManagerScreen = ({navigation}) => {
                 JSON.stringify(dir),
               );
               const file = await exportFile();
-              const result = sendMail(file);
-              if (result) {
-                clearHistory();
-              }
+              sendMail(file);
             },
           },
         ],
@@ -75,17 +72,27 @@ const ManagerScreen = ({navigation}) => {
         return;
       }
       const b64 = XLSX.write(workbook, {type: 'base64', bookType: 'xlsx'});
-      const file = await ScopedStorage.writeFile(
+      const filePatch = await ScopedStorage.writeFile(
         dir.uri,
         b64,
         `prairie_similar_image_customer_history ${getDateNow()}.xlsx`,
         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         'base64',
       );
-      return {
-        uri: file,
+
+      const file = {
+        uri: filePatch,
         mime: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       };
+
+      const fileUrisJson = await AsyncStorage.getItem(storageKey.fileUris);
+      const fileUrisStored = fileUrisJson ? JSON.parse(fileUrisJson) : [];
+      await AsyncStorage.setItem(
+        storageKey.fileUris,
+        JSON.stringify([...fileUrisStored, file.uri]),
+      );
+
+      return file;
     } catch (error) {
       console.log('exportFile', error);
     }
@@ -95,46 +102,55 @@ const ManagerScreen = ({navigation}) => {
     try {
       requestStoragePermission();
       const file = await exportFile();
-      const result = sendMail(file);
-      if (result) {
-        clearHistory();
-      }
+      await sendMail(file);
     } catch (error) {
       console.log('writeFile', error);
     }
   };
 
   const sendMail = file => {
-    if (!file.uri || !file.mime) {
-      return false;
-    }
-    Mailer.mail(
-      {
-        subject: `Prairie - Báo cáo lịch sử chơi game xếp hình ${getTimeNow()}`,
-        recipients: ['nguyennhathaitrieu5903@gmail.com'],
-        body: 'Báo cáo lịch sử chơi game xếp hình',
-        customChooserTitle: 'Báo cáo lịch sử chơi game xếp hình',
-        isHTML: false,
-        attachments: [
-          {
-            uri: file.uri,
-            type: file.mime,
-          },
-        ],
-      },
-      (error, event) => {
-        console.log('sendMail error', error);
-        console.log('sendMail event', event);
-        Alert.alert('Lỗi', 'Gửi email gặp lỗi');
-      },
-    );
-
-    return true;
+    return new Promise((resolve, reject) => {
+      if (!file.uri || !file.mime) {
+        return resolve(false);
+      }
+      Mailer.mail(
+        {
+          subject: `Prairie - Báo cáo lịch sử chơi game xếp hình ${getTimeNow()}`,
+          recipients: ['nguyennhathaitrieu5903@gmail.com'],
+          body: 'Báo cáo lịch sử chơi game xếp hình',
+          customChooserTitle: 'Báo cáo lịch sử chơi game xếp hình',
+          isHTML: false,
+          attachments: [
+            {
+              uri: file.uri,
+              type: file.mime,
+            },
+          ],
+        },
+        (error, event) => {
+          if (error) {
+            return reject(error);
+          }
+          Alert.alert('Lỗi', 'Gửi email gặp lỗi');
+        },
+      );
+      resolve(true);
+    });
   };
 
   const clearHistory = async () => {
     try {
       await AsyncStorage.removeItem(storageKey.customerList);
+      const fileUrisJson = await AsyncStorage.getItem(storageKey.fileUris);
+      if (fileUrisJson) {
+        const fileUris = JSON.parse(fileUrisJson);
+        fileUris.forEach(element => {
+          ScopedStorage.deleteFile(element);
+        });
+      }
+      await AsyncStorage.removeItem(storageKey.fileUris, error => {
+        Alert.alert('Thông báo', 'Xóa thành công');
+      });
     } catch (error) {
       console.log('clearHistory error', error);
     }
@@ -170,6 +186,12 @@ const ManagerScreen = ({navigation}) => {
 
       <TouchableOpacity onPress={onHistoryPress} style={globalStyle.button}>
         <Text style={[globalStyle.textButton]}>Xuất lịch sử chơi game</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={clearHistory} style={globalStyle.button}>
+        <Text style={[globalStyle.textButton, {color: 'red'}]}>
+          Xóa lịch sử chơi game
+        </Text>
       </TouchableOpacity>
     </View>
   );

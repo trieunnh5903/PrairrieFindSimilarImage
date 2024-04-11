@@ -223,7 +223,7 @@ const ImageScreen = ({navigation}) => {
     <ScrollView style={styles.scrollView}>
       <Pressable onPress={() => Keyboard.dismiss()} style={styles.container}>
         {/* imgae in game */}
-        <View style={styles.gap_6}>
+        <View style={[styles.gap_6, {paddingHorizontal: 16}]}>
           <View style={styles.selectImageWrapper}>
             <Text style={[styles.textBlack, styles.textLabel]}>
               Hình ảnh sẽ lật lên trong game
@@ -268,83 +268,88 @@ const ImageScreen = ({navigation}) => {
 
         {/* image winner */}
         {listImage.filter(i => i.selected === true).length > 0 && (
-          <View>
+          <>
             <Padding />
-            <Text style={[styles.textBlack, styles.textLabel]}>
-              Hình ảnh phần quà
-            </Text>
-            <View style={[{gap: 20}, styles.mt_16]}>
-              {listImage
-                .filter(i => i.selected === true)
-                .map((image, index) => {
-                  if (image.selected) {
-                    return (
-                      <View
-                        style={styles.giftContainer}
-                        key={'qua' + image.uri}>
-                        <Text style={globalStyle.textBlack}>
-                          Phần quà số {index + 1}
-                        </Text>
-                        <View style={{flex: 1, alignItems: 'center'}}>
-                          <Text
-                            style={[globalStyle.textButton, globalStyle.mt_16]}>
-                            Hình ảnh trong game
+            <View style={{paddingHorizontal: 16}}>
+              <Text style={[styles.textBlack, styles.textLabel]}>
+                Hình ảnh phần quà
+              </Text>
+              <View style={[{gap: 20}, styles.mt_16]}>
+                {listImage
+                  .filter(i => i.selected === true)
+                  .map((image, index) => {
+                    if (image.selected) {
+                      return (
+                        <View
+                          style={styles.giftContainer}
+                          key={'qua' + image.uri}>
+                          <Text style={globalStyle.textBlack}>
+                            Phần quà số {index + 1}
                           </Text>
-                          <View style={[styles.giftWrapper, {width: '40%'}]}>
-                            <Image
-                              resizeMode="contain"
-                              source={{uri: image.uri}}
-                              style={styles.gift}
-                            />
-                          </View>
-
-                          <Image
-                            resizeMode="contain"
-                            style={styles.downArrow}
-                            source={icons.right_arrow}
-                          />
-
-                          <Text style={globalStyle.textButton}>
-                            Hình ảnh phần quà
-                          </Text>
-                          <TouchableOpacity
-                            onPress={() => handleImageGift(image.uri)}
-                            activeOpacity={0.8}
-                            style={[styles.giftWrapper, {width: '40%'}]}>
-                            {image.giftUri ? (
+                          <View style={{flex: 1, alignItems: 'center'}}>
+                            <Text
+                              style={[
+                                globalStyle.textButton,
+                                globalStyle.mt_16,
+                              ]}>
+                              Hình ảnh trong game
+                            </Text>
+                            <View style={[styles.giftWrapper, {width: '40%'}]}>
                               <Image
                                 resizeMode="contain"
-                                source={{uri: image.giftUri}}
+                                source={{uri: image.uri}}
                                 style={styles.gift}
                               />
-                            ) : (
-                              <View style={[styles.gift, styles.giftEmpty]}>
-                                <Text style={styles.textGray}>Chọn ảnh</Text>
-                              </View>
-                            )}
-                          </TouchableOpacity>
-                        </View>
+                            </View>
 
-                        <AppTextInput
-                          style={styles.input}
-                          value={image.name}
-                          placeholder="Tên phần quà bằng chữ"
-                          placeholderTextColor={'gray'}
-                          onChangeText={text =>
-                            onChangeNameOfGift(image.uri, text)
-                          }
-                        />
-                      </View>
-                    );
-                  }
-                })}
+                            <Image
+                              resizeMode="contain"
+                              style={styles.downArrow}
+                              source={icons.right_arrow}
+                            />
+
+                            <Text style={globalStyle.textButton}>
+                              Hình ảnh phần quà
+                            </Text>
+                            <TouchableOpacity
+                              onPress={() => handleImageGift(image.uri)}
+                              activeOpacity={0.8}
+                              style={[styles.giftWrapper, {width: '40%'}]}>
+                              {image.giftUri ? (
+                                <Image
+                                  resizeMode="contain"
+                                  source={{uri: image.giftUri}}
+                                  style={styles.gift}
+                                />
+                              ) : (
+                                <View style={[styles.gift, styles.giftEmpty]}>
+                                  <Text style={styles.textGray}>Chọn ảnh</Text>
+                                </View>
+                              )}
+                            </TouchableOpacity>
+                          </View>
+
+                          <AppTextInput
+                            style={styles.input}
+                            value={image.name}
+                            placeholder="Tên phần quà bằng chữ"
+                            placeholderTextColor={'gray'}
+                            onChangeText={text =>
+                              onChangeNameOfGift(image.uri, text)
+                            }
+                          />
+                        </View>
+                      );
+                    }
+                  })}
+              </View>
             </View>
             <Padding />
-          </View>
+          </>
         )}
 
         {/* number of pair */}
-        <View>
+        <View style={{paddingHorizontal: 16}}>
           {listImage.find(i => i.selected) && (
             <>
               <Text style={[styles.textBlack, styles.textLabel]}>
@@ -420,11 +425,11 @@ const ImageScreen = ({navigation}) => {
               <Text style={styles.textGray}>(Trống)</Text>
             )} */}
           </View>
-          <Padding />
         </View>
+        <Padding />
 
         {/* image lose */}
-        <View style={styles.gap_16}>
+        <View style={[styles.gap_16, {paddingHorizontal: 16}]}>
           <View style={styles.selectImageWrapper}>
             <Text style={[styles.textBlack, styles.textLabel]}>
               Hình ảnh thua cuộc
@@ -450,49 +455,9 @@ const ImageScreen = ({navigation}) => {
           )}
         </View>
 
-        {/* time to play */}
-        {/* <View style={[styles.gap_6, styles.mt_16]}>
-          <Text style={[styles.textBlack, styles.textLabel]}>
-            Thời gian hiển thị
-          </Text>
-        </View>
-
-        <View>
-          <View style={styles.timeSettingHeader}>
-            <Text style={[styles.flex_1, styles.textGray]}>Màn</Text>
-            <Text style={[styles.flex_1, styles.textGray]}>
-              T.Gian chơi game (giây)
-            </Text>
-            <Text style={[styles.flex_1, styles.textGray]}>
-              T.Gian hiển thị hình (giây)
-            </Text>
-          </View>
-          {timeStore.map((item, index) => {
-            return (
-              <View key={item.key} style={styles.timeBodyContainer}>
-                <Text style={[styles.textTimeLevel, styles.textGray]}>
-                  {item.name}
-                </Text>
-                <TextInput
-                  keyboardType="numeric"
-                  value={item.timePlay}
-                  onChangeText={text => onChangeTimePlay(text, index)}
-                  style={[styles.flex_1, styles.textBlack]}
-                />
-                <TextInput
-                  keyboardType="numeric"
-                  onChangeText={text => onChangeTimeOff(text, index)}
-                  value={item.timeOffImage}
-                  style={[styles.flex_1, styles.textBlack]}
-                />
-              </View>
-            );
-          })}
-        </View> */}
-
         {/* banner */}
         <Padding />
-        <View style={styles.gap_16}>
+        <View style={[styles.gap_16, {paddingHorizontal: 16}]}>
           <View style={styles.selectImageWrapper}>
             <Text style={[styles.textBlack, styles.textLabel]}>
               Banner quảng cáo
@@ -518,7 +483,9 @@ const ImageScreen = ({navigation}) => {
           )}
         </View>
 
-        <TouchableOpacity onPress={onSubmitPress} style={[styles.button]}>
+        <TouchableOpacity
+          onPress={onSubmitPress}
+          style={[styles.button, {marginHorizontal: 16}]}>
           <Text style={[styles.textStyle]}>Thay đổi</Text>
         </TouchableOpacity>
       </Pressable>
@@ -603,6 +570,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     flexWrap: 'wrap',
+    paddingHorizontal: 16,
   },
 
   image: {
@@ -650,7 +618,7 @@ const styles = StyleSheet.create({
   },
 
   container: {
-    padding: 16,
+    paddingVertical: 16,
     flex: 1,
     backgroundColor: 'white',
     gap: 16,

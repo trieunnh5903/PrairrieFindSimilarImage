@@ -20,6 +20,6 @@ export const getDateNow = () => {
   const year = date.getFullYear();
   const hours = date.getHours();
   const minutes = date.getMinutes();
-  const formattedDateTime = `${day}_${month}_${year} ${hours}h${minutes}m`;
+  const formattedDateTime = `${day}_${month}_${year} ${hours}h${minutes}p`;
   return formattedDateTime;
 };

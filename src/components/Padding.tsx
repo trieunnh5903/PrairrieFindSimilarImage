@@ -1,4 +1,10 @@
-import {ColorValue, DimensionValue, StyleSheet, View} from 'react-native';
+import {
+  ColorValue,
+  DimensionValue,
+  Dimensions,
+  StyleSheet,
+  View,
+} from 'react-native';
 import React from 'react';
 
 interface PaddingProps {
@@ -12,7 +18,14 @@ const Padding = ({
   marginVertical = 16,
 }: PaddingProps) => {
   return (
-    <View style={{width: '100%', backgroundColor, padding, marginVertical}} />
+    <View
+      style={{
+        width: Dimensions.get('window').width,
+        backgroundColor,
+        padding,
+        marginVertical,
+      }}
+    />
   );
 };
 

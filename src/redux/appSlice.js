@@ -23,7 +23,7 @@ const initialState = {
       key: 3,
       name: 'Khó',
       timeOffImage: '0.9',
-      timePlay: '33',
+      timePlay: '24',
     },
   ],
 };

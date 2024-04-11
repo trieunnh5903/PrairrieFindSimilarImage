@@ -56,7 +56,7 @@ const WinnerScreen = ({route, navigation}) => {
     <View style={{flex: 1}}>
       <Image
         resizeMode="cover"
-        source={{uri: item.uri}}
+        source={{uri: item.giftUri}}
         style={{width: '100%', height: '100%'}}
       />
     </View>

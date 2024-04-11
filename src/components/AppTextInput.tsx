@@ -9,7 +9,7 @@ const AppTextInput = ({
   return (
     <TextInput
       cursorColor={'#fff'}
-      selectionColor={'#fff'}
+      // selectionColor={'#fff'}
       placeholderTextColor={placeholderTextColor}
       style={styles.input}
       {...props}
