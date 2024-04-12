@@ -190,10 +190,12 @@ const ManagerScreen = ({navigation}) => {
         onPress={() => navigation.navigate(ScreenName.LocationScreen)}
       />
 
-      {/* <TouchableOpacity onPress={onHistoryPress} style={globalStyle.button}>
-        <Text style={[globalStyle.textButton]}>Xuất lịch sử chơi game</Text>
+      <TouchableOpacity
+        onPress={() => navigation.navigate(ScreenName.StorageScreen)}
+        style={globalStyle.button}>
+        <Text style={[globalStyle.textButton]}>Lưu trữ</Text>
       </TouchableOpacity>
-
+      {/*
       <TouchableOpacity onPress={clearHistory} style={globalStyle.button}>
         <Text style={[globalStyle.textButton, {color: 'red'}]}>
           Xóa lịch sử chơi game

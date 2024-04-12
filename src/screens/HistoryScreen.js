@@ -23,6 +23,7 @@ import XLSX, {utils} from 'xlsx';
 import Mailer from 'react-native-mail';
 import {useSelector} from 'react-redux';
 import {LocationIcon} from '../asset';
+import {AppButton} from '../components';
 
 const HistoryScreen = ({navigation}) => {
   const location = useSelector(state => state.location);
@@ -60,14 +61,41 @@ const HistoryScreen = ({navigation}) => {
     }, 4000);
   };
 
+  const checkLocation = () => {
+    if (!location) {
+      Alert.alert('Thông báo', 'Điểm cửa hàng thiếu');
+      return false;
+    }
+    return true;
+  };
+
+  const checkPermission = async () => {
+    try {
+      const persistedUris = await ScopedStorage.getPersistedUriPermissions();
+      if (persistedUris.length > 0) {
+        return true;
+      }
+      Alert.alert('Lỗi', 'Ứng dụng không có quyền truy cập vào bộ nhớ');
+      return false;
+    } catch (error) {
+      console.log('checkPermission', error);
+      return false;
+    }
+  };
+
   const onSendPress = async () => {
     try {
-      if (!location) {
-        Alert.alert('Thông báo', 'Điểm cửa hàng thiếu');
+      const isLocationExsited = checkLocation();
+      if (!isLocationExsited) {
         return;
       }
+
+      const granted = await checkPermission();
+      if (!granted) {
+        return;
+      }
+
       showModalLoading();
-      requestStoragePermission();
       const file = await exportFile();
       if (!file) {
         return;
@@ -77,46 +105,6 @@ const HistoryScreen = ({navigation}) => {
       console.log('onSendPress', error);
     } finally {
       hideModalLoading();
-    }
-  };
-
-  const requestStoragePermission = async () => {
-    try {
-      const persistedUris = await ScopedStorage.getPersistedUriPermissions();
-      if (persistedUris.length > 0) {
-        return;
-      }
-      Alert.alert(
-        'Quyền truy cập bộ nhớ',
-        'Ứng dụng này cần quyền truy cập vào bộ nhớ của bạn để lưu dữ liệu',
-        [
-          {
-            text: 'Hủy',
-            onPress: () => {
-              return;
-            },
-            style: 'cancel',
-          },
-          {
-            text: 'OK',
-            onPress: async () => {
-              const dir = await ScopedStorage.openDocumentTree(true);
-              if (!dir) {
-                return;
-              } // User cancelled
-              const prairieDir = await ScopedStorage.createDirectory(
-                dir.uri,
-                'Prairie xep hinh',
-              );
-              storage.setObjData(storageKey.userDataDirectory, prairieDir);
-              const file = await exportFile();
-              sendMail(file);
-            },
-          },
-        ],
-      );
-    } catch (err) {
-      console.log(err);
     }
   };
 
@@ -158,7 +146,6 @@ const HistoryScreen = ({navigation}) => {
     try {
       // generate data
       const workbook = await generateDataXlsx();
-      console.log('workbook', workbook);
       if (!workbook) {
         Alert.alert('Thông báo', 'Dữ liệu trống');
         return;
@@ -184,9 +171,6 @@ const HistoryScreen = ({navigation}) => {
         mime: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       };
 
-      // save uri
-      const fileUrisStored = await storage.getObject(storageKey.fileUris);
-      storage.setObjData(storageKey.fileUris, [...fileUrisStored, file.uri]);
       return file;
     } catch (error) {
       console.log('exportFile', error);
@@ -200,7 +184,7 @@ const HistoryScreen = ({navigation}) => {
       const filteredCustomerList = await customerList.filter(item => {
         return item['Ngay tao'].startsWith(formatDate(dateModalValue));
       });
-      console.log('filteredCustomerList', filteredCustomerList);
+      // console.log('filteredCustomerList', filteredCustomerList);
       if (filteredCustomerList.length === 0) {
         return null;
       }
@@ -211,9 +195,11 @@ const HistoryScreen = ({navigation}) => {
       return wb;
     } catch (error) {}
   };
-  // const onPress = () => {
-  //   storage.setObjData(storageKey.customerList, sample_data);
-  // };
+
+  const onPress = () => {
+    storage.setObjData(storageKey.customerList, sample_data);
+  };
+
   return (
     <View style={[globalStyle.container, styles.container]}>
       <Modal animationType="fade" transparent visible={isLoading}>

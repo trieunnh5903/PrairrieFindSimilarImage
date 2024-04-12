@@ -7,6 +7,7 @@ const ScreenName = {
   PasswordScreen: 'password',
   HistoryScreen: 'history',
   LocationScreen: 'location',
+  StorageScreen: 'StorageScreen',
 };
 
 export {ScreenName};

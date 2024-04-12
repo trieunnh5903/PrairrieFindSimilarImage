@@ -11,6 +11,7 @@ import {
   LocationScreen,
   ManagerScreen,
   PasswordScreen,
+  StorageScreen,
   TimeScreen,
 } from '../screens';
 import HomeScreen from '../screens/HomeScreen';
@@ -72,10 +73,19 @@ const Application = () => {
         />
 
         <Stack.Screen
+          name={ScreenName.StorageScreen}
+          component={StorageScreen}
+          options={{
+            headerShown: true,
+          }}
+        />
+
+        <Stack.Screen
           name={ScreenName.CustomerInfoScreen}
           component={CustomerInfoScreen}
           options={{headerShown: true, headerTitle: 'Thông tin khách hàng'}}
         />
+
         <Stack.Screen name="home" component={HomeScreen} />
         <Stack.Screen name={ScreenName.GameScreen} component={GameScreen} />
         <Stack.Screen name="lose" component={LoseScreen} />
