@@ -23,7 +23,6 @@ import XLSX, {utils} from 'xlsx';
 import Mailer from 'react-native-mail';
 import {useSelector} from 'react-redux';
 import {LocationIcon} from '../asset';
-import {AppButton} from '../components';
 
 const HistoryScreen = ({navigation}) => {
   const location = useSelector(state => state.location);
@@ -62,15 +61,23 @@ const HistoryScreen = ({navigation}) => {
   };
 
   const onSendPress = async () => {
-    showModalLoading();
     try {
+      if (!location) {
+        Alert.alert('Thông báo', 'Điểm cửa hàng thiếu');
+        return;
+      }
+      showModalLoading();
       requestStoragePermission();
       const file = await exportFile();
+      if (!file) {
+        return;
+      }
       await sendMail(file);
     } catch (error) {
       console.log('onSendPress', error);
+    } finally {
+      hideModalLoading();
     }
-    hideModalLoading();
   };
 
   const requestStoragePermission = async () => {
@@ -81,7 +88,7 @@ const HistoryScreen = ({navigation}) => {
       }
       Alert.alert(
         'Quyền truy cập bộ nhớ',
-        'Ứng dụng này cần quyền truy cập vào bộ nhớ của bạn để lưu dữ liệu tạm thời',
+        'Ứng dụng này cần quyền truy cập vào bộ nhớ của bạn để lưu dữ liệu',
         [
           {
             text: 'Hủy',
@@ -151,7 +158,8 @@ const HistoryScreen = ({navigation}) => {
     try {
       // generate data
       const workbook = await generateDataXlsx();
-      if (workbook === null) {
+      console.log('workbook', workbook);
+      if (!workbook) {
         Alert.alert('Thông báo', 'Dữ liệu trống');
         return;
       }
@@ -192,6 +200,7 @@ const HistoryScreen = ({navigation}) => {
       const filteredCustomerList = await customerList.filter(item => {
         return item['Ngay tao'].startsWith(formatDate(dateModalValue));
       });
+      console.log('filteredCustomerList', filteredCustomerList);
       if (filteredCustomerList.length === 0) {
         return null;
       }

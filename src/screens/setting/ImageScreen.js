@@ -267,7 +267,7 @@ const ImageScreen = ({navigation}) => {
               );
             })
           ) : (
-            <Text style={styles.textGray}>(Trống)</Text>
+            <Text style={globalStyle.textWhite}>(Trống)</Text>
           )}
         </View>
 
@@ -461,7 +461,7 @@ const ImageScreen = ({navigation}) => {
               }}
             />
           ) : (
-            <Text style={styles.textGray}>(Trống)</Text>
+            <Text style={globalStyle.textWhite}>(Trống)</Text>
           )}
         </View>
 
@@ -489,7 +489,7 @@ const ImageScreen = ({navigation}) => {
               }}
             />
           ) : (
-            <Text style={styles.textGray}>(Trống)</Text>
+            <Text style={globalStyle.textWhite}>(Trống)</Text>
           )}
         </View>
 
