@@ -2,7 +2,7 @@ import {BackHandler, Image, StyleSheet, Text, View} from 'react-native';
 import React, {useEffect} from 'react';
 import {useSelector} from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {storageKey} from '../constant';
+import {CustomerKey, storageKey} from '../constant';
 import {getTimeNow} from '../utils';
 
 const LoseScreen = ({navigation}) => {
@@ -19,8 +19,8 @@ const LoseScreen = ({navigation}) => {
         const lastCustomer = storedCustomerList[storedCustomerList.length - 1];
         const updatedCustomer = {
           ...lastCustomer,
-          ['Ket qua']: 'Chúc bạn may mắn lần sau',
-          ['Thoi gian choi']: getTimeNow(),
+          [CustomerKey.KET_QUA]: 'Chúc bạn may mắn lần sau',
+          [CustomerKey.KET_THUC]: getTimeNow(),
         };
 
         const updatedCustomerList = [

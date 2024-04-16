@@ -26,6 +26,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {icons} from '../asset';
+import {getTimeNow, storage} from '../utils';
+import {CustomerKey, storageKey} from '../constant';
 
 const {width: screen_width, height: screen_height} = Dimensions.get('window');
 
@@ -227,8 +229,33 @@ const GameScreen = ({navigation}) => {
     return unsubscribe;
   }, [navigation, stopTimer]);
 
+  const saveHistory = async () => {
+    try {
+      const storedCustomerList = await storage.getObject(
+        storageKey.customerList,
+      );
+
+      const lastCustomer = storedCustomerList[storedCustomerList.length - 1];
+      // console.log('lastCustomer', lastCustomer);
+      const updatedCustomer = {
+        ...lastCustomer,
+        [CustomerKey.BAT_DAU]: getTimeNow(),
+      };
+      // console.log('updatedCustomer', updatedCustomer);
+
+      const updatedCustomerList = [
+        ...storedCustomerList.slice(0, storedCustomerList.length - 1),
+        updatedCustomer,
+      ];
+      await storage.setObjData(storageKey.customerList, updatedCustomerList);
+    } catch (error) {
+      console.log('saveHistory', error);
+    }
+  };
+
   const onStartPress = () => {
     if (images) {
+      saveHistory();
       setIsPlaying(true);
       setSelectedImages([]);
       setShowCountDown(true);

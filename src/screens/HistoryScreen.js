@@ -10,6 +10,8 @@ import {
 } from 'react-native';
 import React, {useState} from 'react';
 import {
+  CustomerKey,
+  EMAIL,
   ScreenName,
   colors,
   globalStyle,
@@ -23,7 +25,6 @@ import XLSX, {utils} from 'xlsx';
 import Mailer from 'react-native-mail';
 import {useSelector} from 'react-redux';
 import {LocationIcon} from '../asset';
-import {AppButton} from '../components';
 
 const HistoryScreen = ({navigation}) => {
   const location = useSelector(state => state.location);
@@ -118,8 +119,8 @@ const HistoryScreen = ({navigation}) => {
           subject: `${location || 'Thiếu'} (${formatDate(
             dateModalValue,
           )}) - Báo cáo lịch sử chơi game xếp hình`,
-          recipients: ['nguyennhathaitrieu5903@gmail.com'],
-          body: `Báo cáo lịch sử chơi game xếp hình \n Cửa hàng: ${location} \n Ngày: ${formatDate(
+          recipients: [EMAIL],
+          body: `Báo cáo lịch sử chơi game xếp hình \n Điểm bán: ${location} \n Ngày: ${formatDate(
             dateModalValue,
           )} `,
           customChooserTitle: 'Báo cáo lịch sử chơi game xếp hình',
@@ -157,7 +158,7 @@ const HistoryScreen = ({navigation}) => {
       if (!dir) {
         return;
       }
-      const dirName = 'Prairie Lucky Wheel';
+      const dirName = 'Prairie Puzzle';
       const listFile = await ScopedStorage.listFiles(dir.uri);
       const existedDir = listFile.find(i => i.name === dirName);
       const prairieDir = !existedDir
@@ -189,10 +190,12 @@ const HistoryScreen = ({navigation}) => {
     try {
       // get data in async storage
       const customerList = await storage.getObject(storageKey.customerList);
+      // console.log(customerList);
+      // console.log(formatDate(dateModalValue));
       const filteredCustomerList = await customerList.filter(item => {
-        return item['Ngay tao'].startsWith(formatDate(dateModalValue));
+        return item[CustomerKey.NGAY] === formatDate(dateModalValue);
       });
-      // console.log('filteredCustomerList', filteredCustomerList);
+
       if (filteredCustomerList.length === 0) {
         return null;
       }

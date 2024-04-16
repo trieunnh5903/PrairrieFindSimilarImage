@@ -1,8 +1,9 @@
 import {Alert, Keyboard, Pressable, StyleSheet} from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {ScreenName, globalStyle, storageKey} from '../constant';
+import {CustomerKey, ScreenName, globalStyle, storageKey} from '../constant';
 import {AppButton, AppTextInput} from '../components';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {formatDate} from '../utils';
 
 const CustomerInfoScreen = ({navigation}) => {
   const [invoiceCode, setInvoiceCode] = useState('');
@@ -58,21 +59,19 @@ const CustomerInfoScreen = ({navigation}) => {
     try {
       // Lấy ngày, tháng, năm
       const date = new Date();
-      const day = date.getDate();
-      const month = date.getMonth() + 1;
-      const year = date.getFullYear();
-      // Lấy giờ, phút, giây
-      const hours = date.getHours();
-      const minutes = date.getMinutes();
-      const seconds = date.getSeconds();
-      const formattedDateTime = `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
 
       const newCustomer = {
-        ['Ma hoa don']: invoiceCode,
-        ['Ten khach hang']: customerName,
-        ['So dien thoai']: phoneNumber,
-        ['Ngay tao']: formattedDateTime,
+        [CustomerKey.STT]: (customerList.length + 1).toString(),
+        [CustomerKey.NGAY]: formatDate(date),
+        [CustomerKey.MA_HD]: invoiceCode,
+        [CustomerKey.BAT_DAU]: '',
+        [CustomerKey.KET_THUC]: '',
+        [CustomerKey.TEN_KHACH_HANG]: customerName,
+        [CustomerKey.SĐT]: phoneNumber,
+        [CustomerKey.KET_QUA]: '',
       };
+
+      // console.log(newCustomer);
       const updatedCustomerList = [...customerList, newCustomer];
       await AsyncStorage.setItem(
         storageKey.customerList,
@@ -90,7 +89,7 @@ const CustomerInfoScreen = ({navigation}) => {
   };
 
   const isDuplicateInvoiceCode = code => {
-    return customerList.some(customer => customer['Ma hoa don'] === code);
+    return customerList.some(customer => customer[CustomerKey.MA_HD] === code);
   };
 
   const isValidPhoneNumber = phoneNumber => {

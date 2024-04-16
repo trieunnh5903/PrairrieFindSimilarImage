@@ -1,7 +1,7 @@
 import {BackHandler, Image, StyleSheet, Text, View} from 'react-native';
 import React, {useEffect} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {storageKey} from '../constant';
+import {CustomerKey, storageKey} from '../constant';
 import {getTimeNow} from '../utils';
 
 const WinnerScreen = ({route, navigation}) => {
@@ -32,8 +32,8 @@ const WinnerScreen = ({route, navigation}) => {
         // console.log('lastCustomer', lastCustomer);
         const updatedCustomer = {
           ...lastCustomer,
-          ['Ket qua']: item.name,
-          ['Thoi gian choi']: getTimeNow(),
+          [CustomerKey.KET_QUA]: item.name,
+          [CustomerKey.KET_THUC]: getTimeNow(),
         };
         // console.log('updatedCustomer', updatedCustomer);
 
