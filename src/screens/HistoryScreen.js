@@ -150,14 +150,22 @@ const HistoryScreen = ({navigation}) => {
         Alert.alert('Thông báo', 'Dữ liệu trống');
         return;
       }
+      const b64 = XLSX.write(workbook, {type: 'base64', bookType: 'xlsx'});
+
       // generate file
       const dir = await storage.getObject(storageKey.userDataDirectory);
       if (!dir) {
         return;
       }
-      const b64 = XLSX.write(workbook, {type: 'base64', bookType: 'xlsx'});
+      const dirName = 'Prairie Lucky Wheel';
+      const listFile = await ScopedStorage.listFiles(dir.uri);
+      const existedDir = listFile.find(i => i.name === dirName);
+      const prairieDir = !existedDir
+        ? await ScopedStorage.createDirectory(dir.uri, dirName)
+        : existedDir;
+
       const filePatch = await ScopedStorage.writeFile(
-        dir.uri,
+        prairieDir.uri,
         b64,
         `${(location || '').toLowerCase()} xep_hinh ${formatDate(
           dateModalValue,
@@ -292,7 +300,7 @@ const styles = StyleSheet.create({
     height: screenWidth * 0.3,
     position: 'absolute',
     bottom: 0,
-    right: 0,
+    left: 0,
   },
 });
 
