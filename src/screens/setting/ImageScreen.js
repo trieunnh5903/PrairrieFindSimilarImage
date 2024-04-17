@@ -492,12 +492,6 @@ const ImageScreen = ({navigation}) => {
             <Text style={globalStyle.textWhite}>(Trống)</Text>
           )}
         </View>
-
-        <TouchableOpacity
-          onPress={onSubmitPress}
-          style={[styles.button, {marginHorizontal: 16}]}>
-          <Text style={[styles.textStyle]}>Thay đổi</Text>
-        </TouchableOpacity>
       </Pressable>
     </ScrollView>
   );

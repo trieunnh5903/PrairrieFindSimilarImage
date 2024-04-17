@@ -1,4 +1,5 @@
 import {
+  Alert,
   Dimensions,
   Image,
   ImageBackground,
@@ -9,22 +10,104 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {changeLevel} from '../redux/appSlice';
 import {icons} from '../asset';
 import {ScreenName, colors} from '../constant';
+import * as ScopedStorage from 'react-native-scoped-storage';
 
 const width = Dimensions.get('window').width;
 const HomeScreen = ({navigation}) => {
   const dispatch = useDispatch();
   const [timePress, setTimePress] = useState(0);
-  const error = useSelector(state => state.error);
   const [modalLevelVisible, setModalLevelVisible] = useState(false);
   const bannerImage = useSelector(state => state.banner);
+  const listImage = useSelector(state => state.imageInGame);
+  const imageLose = useSelector(state => state.loseImage);
+  const timeStore = useSelector(state => state.time);
+  const location = useSelector(state => state.location);
+  const validate = useCallback(async () => {
+    try {
+      const pairRegex = /^(0(\.5)?|[1-9]\d*(\.5)?)$/;
+      const timeRegex = /^(0|[1-9]\d*)(\.\d+)?$/;
+      const persistedUris = await ScopedStorage.getPersistedUriPermissions();
+      if (persistedUris.length === 0) {
+        Alert.alert('Thông báo', 'Thư mục lưu trữ trống');
+        return false;
+      }
 
-  const handleButtonPress = () => {
-    if (error === false) {
+      if (!location) {
+        Alert.alert('Thông báo', 'Điểm bán hàng trống');
+        return false;
+      }
+
+      if (listImage.length === 0) {
+        Alert.alert('Thông báo', 'Hình ảnh game trống');
+        return false;
+      }
+
+      const listGift = listImage.filter(i => i.selected === true);
+      if (listGift.length <= 0) {
+        Alert.alert('Thông báo', 'Hình ảnh phần quà trống');
+        return false;
+      } else {
+        for (let index = 0; index < listGift.length; index++) {
+          const element = listGift[index];
+          if (!element.giftUri) {
+            Alert.alert('Thông báo', 'Hình ảnh phần quà trống');
+            return false;
+          }
+          if (!element.name) {
+            Alert.alert('Thông báo', 'Tên phần quà trống');
+            return false;
+          }
+          const pairs = element?.pair;
+          if (!pairs) {
+            Alert.alert('Thông báo', 'Số cặp trống');
+            return false;
+          } else {
+            if (
+              !pairRegex.test(pairs[0]) ||
+              !pairRegex.test(pairs[1]) ||
+              !pairRegex.test(pairs[2])
+            ) {
+              Alert.alert('Thông báo', 'Số cặp không đúng');
+              return false;
+            }
+          }
+        }
+      }
+
+      if (!imageLose) {
+        Alert.alert('Thông báo', 'Hình ảnh thua cuộc trống');
+        return false;
+      }
+
+      for (let index = 0; index < timeStore.length; index++) {
+        const element = timeStore[index];
+        if (
+          !timeRegex.test(element.timePlay) ||
+          !timeRegex.test(element.timeOffImage)
+        ) {
+          Alert.alert('Thông báo', 'Thời gian không đúng');
+          return false;
+        }
+      }
+
+      if (!bannerImage) {
+        Alert.alert('Thông báo', 'Hình ảnh Banner trống');
+        return false;
+      }
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }, [bannerImage, imageLose, listImage, location, timeStore]);
+
+  const handleButtonPress = async () => {
+    const result = await validate();
+    if (result) {
       setModalLevelVisible(true);
     }
   };

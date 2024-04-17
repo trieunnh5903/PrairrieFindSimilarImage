@@ -15,11 +15,6 @@ const LocationScreen = ({navigation}) => {
         onChangeText={text => dispatch(changeLocation(text))}
         placeholder="Điểm bán hiện tại"
       />
-      <AppButton
-        label="Thay đổi"
-        onPress={() => navigation.goBack()}
-        style={{marginTop: 20}}
-      />
     </Pressable>
   );
 };
