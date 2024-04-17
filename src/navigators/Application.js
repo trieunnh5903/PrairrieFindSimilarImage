@@ -22,7 +22,6 @@ import {useSelector} from 'react-redux';
 const Stack = createNativeStackNavigator();
 
 const Application = () => {
-  const error = useSelector(state => state.error);
   return (
     <NavigationContainer>
       <Stack.Navigator

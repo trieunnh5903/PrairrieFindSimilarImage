@@ -24,15 +24,10 @@ const HomeScreen = ({navigation}) => {
   const bannerImage = useSelector(state => state.banner);
 
   const handleButtonPress = () => {
-    setModalLevelVisible(true);
-  };
-
-  React.useEffect(() => {
-    if (error) {
-      navigation.navigate(ScreenName.PasswordScreen);
+    if (error === false) {
+      setModalLevelVisible(true);
     }
-    return () => {};
-  }, [error, navigation]);
+  };
 
   const onTimePress = () => {
     setTimePress(pre => pre + 1);
