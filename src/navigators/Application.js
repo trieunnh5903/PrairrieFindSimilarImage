@@ -38,7 +38,7 @@ const Application = () => {
           name={ScreenName.PasswordScreen}
           component={PasswordScreen}
           options={{
-            headerShown: !error,
+            headerShown: true,
           }}
         />
         <Stack.Screen

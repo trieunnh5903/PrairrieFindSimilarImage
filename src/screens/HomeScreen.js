@@ -93,12 +93,14 @@ const HomeScreen = ({navigation}) => {
           activeOpacity={0.8}
           onPress={() => handleButtonPress()}
           style={{flex: 1}}>
-          {bannerImage && (
+          {bannerImage ? (
             <Image
               source={{uri: bannerImage}}
               style={{flex: 1}}
               resizeMode="contain"
             />
+          ) : (
+            <View style={{flex: 1, borderWidth: 1}} />
           )}
         </TouchableOpacity>
       </View>
