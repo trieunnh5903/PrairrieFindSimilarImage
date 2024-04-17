@@ -27,6 +27,7 @@ const StorageScreen = () => {
         return;
       }
       storage.setObjData(storageKey.userDataDirectory, dir);
+      setHasUri(true);
     } catch (err) {
       console.log('requestStoragePermission', err);
     }
