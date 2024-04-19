@@ -8,6 +8,7 @@ const globalStyle = StyleSheet.create({
     flex: 1,
     padding: 16,
     backgroundColor: '#7e9d38',
+    paddingTop: 0,
   },
   textButton: {
     textAlign: 'center',

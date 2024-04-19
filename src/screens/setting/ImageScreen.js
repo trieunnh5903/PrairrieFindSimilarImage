@@ -28,116 +28,13 @@ import {
 } from '../../redux/appSlice';
 import {CheckedSvg, DownSvg, icons} from '../../asset';
 import {Padding, AppTextInput} from '../../components';
-import {colors, globalStyle} from '../../constant';
+import {colors, globalStyle, screenHeight, screenWidth} from '../../constant';
 
 const {width} = Dimensions.get('window');
 const ImageScreen = ({navigation}) => {
   const dispatch = useDispatch();
   const listImage = useSelector(state => state.imageInGame);
   const imageLose = useSelector(state => state.loseImage);
-  const timeStore = useSelector(state => state.time);
-  const bannerImage = useSelector(state => state.banner);
-
-  const onChangeTimePlay = (value, index) => {
-    dispatch(changeTimeToPlay({value, index}));
-  };
-
-  const onChangeTimeOff = (value, index) => {
-    dispatch(changeTimeOffImage({value, index}));
-  };
-
-  const onSubmitPress = () => {
-    const result = validate();
-    if (result === false) {
-      dispatch(setError(true));
-      return;
-    }
-    Alert.alert('Thông báo', 'Thay đổi thành công');
-    dispatch(setError(false));
-  };
-
-  const validate = useCallback(() => {
-    const pairRegex = /^(0(\.5)?|[1-9]\d*(\.5)?)$/;
-    const timeRegex = /^(0|[1-9]\d*)(\.\d+)?$/;
-    if (listImage.length === 0) {
-      Alert.alert('Thông báo', 'Hình ảnh game trống');
-      return false;
-    }
-
-    const listGift = listImage.filter(i => i.selected === true);
-    if (listGift.length <= 0) {
-      Alert.alert('Thông báo', 'Hình ảnh phần quà trống');
-      return false;
-    } else {
-      for (let index = 0; index < listGift.length; index++) {
-        const element = listGift[index];
-        if (!element.giftUri) {
-          Alert.alert('Thông báo', 'Hình ảnh phần quà trống');
-          return false;
-        }
-        if (!element.name) {
-          Alert.alert('Thông báo', 'Tên phần quà trống');
-          return false;
-        }
-        const pairs = element?.pair;
-        if (!pairs) {
-          Alert.alert('Thông báo', 'Số cặp trống');
-          return false;
-        } else {
-          if (
-            !pairRegex.test(pairs[0]) ||
-            !pairRegex.test(pairs[1]) ||
-            !pairRegex.test(pairs[2])
-          ) {
-            Alert.alert('Thông báo', 'Số cặp không đúng');
-            return false;
-          }
-        }
-      }
-    }
-
-    if (!imageLose) {
-      Alert.alert('Thông báo', 'Hình ảnh thua cuộc trống');
-      return false;
-    }
-
-    for (let index = 0; index < timeStore.length; index++) {
-      const element = timeStore[index];
-      if (
-        !timeRegex.test(element.timePlay) ||
-        !timeRegex.test(element.timeOffImage)
-      ) {
-        Alert.alert('Thông báo', 'Thời gian không đúng');
-        return false;
-      }
-    }
-
-    if (!bannerImage) {
-      Alert.alert('Thông báo', 'Hình ảnh Banner trống');
-      return false;
-    }
-    return true;
-  }, [bannerImage, imageLose, listImage, timeStore]);
-
-  useEffect(() => {
-    const backAction = () => {
-      const result = validate();
-      if (result) {
-        dispatch(setError(false));
-        navigation.goBack();
-        return true;
-      }
-      dispatch(setError(true));
-      return false;
-    };
-
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-
-    return () => backHandler.remove();
-  }, [dispatch, navigation, validate]);
 
   const handleSelectImageInGame = async () => {
     ImagePicker.openPicker({
@@ -158,17 +55,6 @@ const ImageScreen = ({navigation}) => {
     })
       .then(result => {
         dispatch(changeLoseImage(result.path));
-      })
-      .catch(() => {});
-  };
-
-  const handleBannerImagePress = async () => {
-    ImagePicker.openPicker({
-      multiple: false,
-      mediaType: 'photo',
-    })
-      .then(result => {
-        dispatch(changeBannerImage(result.path));
       })
       .catch(() => {});
   };
@@ -464,34 +350,6 @@ const ImageScreen = ({navigation}) => {
             <Text style={globalStyle.textWhite}>(Trống)</Text>
           )}
         </View>
-
-        {/* banner */}
-        <Padding />
-        <View style={[styles.gap_16, {paddingHorizontal: 16}]}>
-          <View style={styles.selectImageWrapper}>
-            <Text style={[styles.textBlack, styles.textLabel]}>
-              Banner quảng cáo
-            </Text>
-
-            <TouchableOpacity
-              onPress={handleBannerImagePress}
-              style={[styles.button]}>
-              <Text style={[styles.textStyle]}>Chọn ảnh</Text>
-            </TouchableOpacity>
-          </View>
-
-          {bannerImage ? (
-            <Image
-              resizeMode="contain"
-              style={styles.image}
-              source={{
-                uri: bannerImage,
-              }}
-            />
-          ) : (
-            <Text style={globalStyle.textWhite}>(Trống)</Text>
-          )}
-        </View>
       </Pressable>
     </ScrollView>
   );
@@ -627,6 +485,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.primary,
     gap: 16,
+    minHeight: screenHeight,
   },
 
   inputWrapper: {

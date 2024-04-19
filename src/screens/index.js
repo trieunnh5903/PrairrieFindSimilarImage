@@ -7,3 +7,5 @@ export {default as CustomerInfoScreen} from './CustomerInfoScreen';
 export {default as GameScreen} from './GameScreen';
 export {default as PasswordScreen} from './PasswordScreen';
 export {default as HistoryScreen} from './HistoryScreen';
+export {default as StandByImage} from './setting/StandByImage';
+export {default as ChangePassword} from './setting/ChangePassword';

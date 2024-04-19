@@ -50,6 +50,8 @@ const CustomerInfoScreen = ({navigation}) => {
         'Lỗi',
         'Mã hóa đơn đã sử dụng. Vui lòng sử dụng một mã khác.',
       );
+    } else if (!isValidInvoiceCode(invoiceCode)) {
+      Alert.alert('Lỗi', 'Mã hóa đơn chứa 7 số');
     } else {
       saveCustomerInformation();
     }
@@ -94,6 +96,10 @@ const CustomerInfoScreen = ({navigation}) => {
 
   const isValidPhoneNumber = phoneNumber => {
     return /^0\d{9}$/.test(phoneNumber);
+  };
+
+  const isValidInvoiceCode = invoiceCode => {
+    return /^\d{7}$/.test(invoiceCode);
   };
 
   return (

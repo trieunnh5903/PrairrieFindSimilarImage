@@ -104,6 +104,7 @@ const HomeScreen = ({navigation}) => {
       return false;
     }
   }, [bannerImage, imageLose, listImage, location, timeStore]);
+  const standByBackground = useSelector(state => state.standByBackground);
 
   const handleButtonPress = async () => {
     const result = await validate();
@@ -132,7 +133,9 @@ const HomeScreen = ({navigation}) => {
   };
 
   return (
-    <ImageBackground source={icons.bgHome} style={styles.container}>
+    <ImageBackground
+      source={standByBackground ? {uri: standByBackground} : icons.bgHome}
+      style={styles.container}>
       <Modal
         animationType="fade"
         transparent={true}
@@ -159,13 +162,6 @@ const HomeScreen = ({navigation}) => {
         </View>
       </Modal>
 
-      <View style={{alignItems: 'center'}}>
-        <Image
-          source={icons.logo_removebg}
-          style={{width: 60, height: (60 / 500) * 815, margin: 10}}
-          resizeMode="contain"
-        />
-      </View>
       <View style={styles.banner}>
         <TouchableOpacity
           activeOpacity={0.8}
@@ -183,23 +179,6 @@ const HomeScreen = ({navigation}) => {
         </TouchableOpacity>
       </View>
 
-      <View>
-        <Image
-          source={icons.text_home}
-          style={{
-            width: 200,
-            height: (200 / 1000) * 320,
-            alignSelf: 'center',
-            marginBottom: -40,
-          }}
-          resizeMode="contain"
-        />
-        <Image
-          source={icons.gift}
-          style={{width: width, height: (width / 250) * 101}}
-          resizeMode="contain"
-        />
-      </View>
       <Pressable onPress={onTimePress} style={styles.admin} />
     </ImageBackground>
   );

@@ -4,6 +4,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {NavigationContainer} from '@react-navigation/native';
 import {ScreenName, colors} from '../constant';
 import {
+  ChangePassword,
   CustomerInfoScreen,
   GameScreen,
   HistoryScreen,
@@ -11,6 +12,7 @@ import {
   LocationScreen,
   ManagerScreen,
   PasswordScreen,
+  StandByImage,
   StorageScreen,
   TimeScreen,
 } from '../screens';
@@ -57,6 +59,19 @@ const Application = () => {
           component={ImageScreen}
           options={{headerShown: true}}
         />
+
+        <Stack.Screen
+          name={ScreenName.StandByImage}
+          component={StandByImage}
+          options={{headerShown: true}}
+        />
+
+        <Stack.Screen
+          name={ScreenName.ChangePassword}
+          component={ChangePassword}
+          options={{headerShown: true}}
+        />
+
         <Stack.Screen
           name={ScreenName.TimeSettingScreen}
           component={TimeScreen}

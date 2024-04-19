@@ -27,12 +27,20 @@ const initialState = {
       timePlay: '24',
     },
   ],
+  standByBackground: '',
+  password: '123456789',
 };
 
 export const appSlice = createSlice({
   name: 'counter',
   initialState,
   reducers: {
+    changePassword: (state, action) => {
+      state.password = action.payload;
+    },
+    changeStandByBackground: (state, action) => {
+      state.standByBackground = action.payload;
+    },
     changeLocation: (state, action) => {
       state.location = action.payload;
     },
@@ -91,6 +99,8 @@ export const appSlice = createSlice({
 
 // Action creators are generated for each case reducer function
 export const {
+  changeStandByBackground,
+  changePassword,
   changeLocation,
   setError,
   addImages,

@@ -16,6 +16,7 @@ import {useSelector} from 'react-redux';
 
 const PasswordScreen = ({navigation}) => {
   const error = useSelector(state => state.error);
+  const savedPassword = useSelector(state => state.password);
   useEffect(() => {
     const backAction = () => {
       if (error === true) {
@@ -34,7 +35,7 @@ const PasswordScreen = ({navigation}) => {
 
   const [password, setPassword] = useState();
   const onPress = () => {
-    if (password !== '123456789') {
+    if (password !== savedPassword) {
       Alert.alert('', 'Mật khẩu không đúng');
       return;
     }
