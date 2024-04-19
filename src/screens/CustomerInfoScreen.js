@@ -64,7 +64,7 @@ const CustomerInfoScreen = ({navigation}) => {
 
       const newCustomer = {
         [CustomerKey.STT]: (customerList.length + 1).toString(),
-        [CustomerKey.NGAY]: formatDate(date),
+        [CustomerKey.NGAY]: date,
         [CustomerKey.MA_HD]: invoiceCode,
         [CustomerKey.BAT_DAU]: '',
         [CustomerKey.KET_THUC]: '',
